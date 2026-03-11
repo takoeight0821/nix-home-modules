@@ -26,7 +26,7 @@ result="passthrough"
 if [[ -n "$stdout_data" ]]; then
   if printf '%s' "$stdout_data" | jq -e '.permissionDecision' >/dev/null 2>&1; then
     result=$(printf '%s' "$stdout_data" | jq -r '.permissionDecision')
-  elif printf '%s' "$stdout_data" | jq -e '.tool_input' >/dev/null 2>&1; then
+  elif printf '%s' "$stdout_data" | jq -e '.updatedInput // .tool_input' >/dev/null 2>&1; then
     result="rewrite"
   elif printf '%s' "$stdout_data" | jq -e '.systemMessage' >/dev/null 2>&1; then
     result="message"
