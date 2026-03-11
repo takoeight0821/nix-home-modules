@@ -391,344 +391,47 @@ in
 
     home.file.".claude/hooks/prefer-deno.sh" = {
       executable = true;
-      text = ''
-        #!/bin/bash
-        set -euo pipefail
-        INPUT=$(cat)
-        COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
-
-        STRIPPED=$(echo "$COMMAND" | sed "s/'[^']*'//g" | sed 's/"[^"]*"//g')
-
-        if ! echo "$STRIPPED" | grep -qE '(^|\s|&&|\|\||;)python3?\b'; then
-          exit 0
-        fi
-
-        jq -n '{
-          systemMessage: "Consider using deno instead of python. Deno has a built-in permission model, making it safer for auto-approval."
-        }'
-        exit 0
-      '';
+      text = builtins.readFile ./hooks/prefer-deno.sh;
     };
 
     home.file.".claude/hooks/prefer-jq.sh" = {
       executable = true;
-      text = ''
-        #!/bin/bash
-        set -euo pipefail
-        INPUT=$(cat)
-        COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
-
-        STRIPPED=$(echo "$COMMAND" | sed "s/'[^']*'//g" | sed 's/"[^"]*"//g')
-
-        if ! echo "$STRIPPED" | grep -qE 'python3?[[:space:]]+-m[[:space:]]+json\.tool'; then
-          exit 0
-        fi
-
-        NEW_COMMAND=$(echo "$COMMAND" | sed -E 's/python3?[[:space:]]+-m[[:space:]]+json\.tool/jq ./g')
-
-        jq -n --arg cmd "$NEW_COMMAND" '{
-          updatedInput: {
-            command: $cmd
-          }
-        }'
-        exit 0
-      '';
+      text = builtins.readFile ./hooks/prefer-jq.sh;
     };
 
     home.file.".claude/hooks/block-dangerous-flags.sh" = {
       executable = true;
-      text = ''
-        #!/bin/bash
-        INPUT=$(cat)
-        COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
-
-        STRIPPED=$(echo "$COMMAND" | sed "s/'[^']*'//g" | sed 's/"[^"]*"//g')
-
-        deny() {
-          jq -n --arg reason "$1" '{
-            hookSpecificOutput: {
-              hookEventName: "PreToolUse",
-              permissionDecision: "deny",
-              permissionDecisionReason: $reason
-            }
-          }'
-          exit 0
-        }
-
-        if echo "$STRIPPED" | grep -qE '(^|\s|&&|\|\||;)sed\b' && \
-           echo "$STRIPPED" | grep -qE '\s-[^\s]*i|\s--in-place\b'; then
-          deny "sed -i (in-place edit) is not allowed. Use sed without -i to output to stdout."
-        fi
-
-        if echo "$STRIPPED" | grep -qE '(^|\s|&&|\|\||;)find\b' && \
-           echo "$STRIPPED" | grep -qE '\s-(delete|exec|execdir|ok|okdir|fls|fprint0?|fprintf)\b'; then
-          deny "find with -delete/-exec/-execdir/-ok/-okdir/-fls/-fprint is not allowed. Use find for listing only."
-        fi
-
-        if echo "$STRIPPED" | grep -qE '(^|\s|&&|\|\||;)fd\b' && \
-           echo "$STRIPPED" | grep -qE '\s(-x|--exec|-X|--exec-batch)\b'; then
-          deny "fd with --exec/--exec-batch is not allowed. Use fd for listing only."
-        fi
-
-        if echo "$STRIPPED" | grep -qE '(^|\s|&&|\|\||;)sort\b' && \
-           echo "$STRIPPED" | grep -qE '\s(-o|--output)\b'; then
-          deny "sort -o (output to file) is not allowed. Use sort to output to stdout."
-        fi
-
-        if echo "$STRIPPED" | grep -qE '(^|\s|&&|\|\||;)nix\b' && \
-           echo "$STRIPPED" | grep -qE '\bstore\s+(delete|gc|repair|optimise)\b'; then
-          deny "nix store delete/gc/repair/optimise is not allowed via auto-approve. Run manually if needed."
-        fi
-
-        if echo "$STRIPPED" | grep -qE '(^|\s|&&|\|\||;)nix\b' && \
-           echo "$STRIPPED" | grep -qE '\bprofile\s+(remove|wipe-history)\b'; then
-          deny "nix profile remove/wipe-history is not allowed via auto-approve. Run manually if needed."
-        fi
-
-        if echo "$STRIPPED" | grep -qE '(^|\s|&&|\|\||;)nix-env\b' && \
-           echo "$STRIPPED" | grep -qE '\s--(uninstall|delete-generations)\b|\s-e\b'; then
-          deny "nix-env --uninstall/--delete-generations is not allowed via auto-approve. Run manually if needed."
-        fi
-
-        exit 0
-      '';
+      text = builtins.readFile ./hooks/block-dangerous-flags.sh;
     };
 
     home.file.".claude/hooks/gh-api-readonly.sh" = {
       executable = true;
-      text = ''
-        #!/bin/bash
-        set -euo pipefail
-        INPUT=$(cat)
-        COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
-
-        if ! echo "$COMMAND" | grep -qE '(^|\s|&&|\|\||;)gh\s+api\b'; then
-          exit 0
-        fi
-
-        if echo "$COMMAND" | grep -qiE '(--method|-X)\s+GET\b'; then
-          exit 0
-        fi
-
-        if echo "$COMMAND" | grep -qE '/pulls/[0-9]+/comments/[0-9]+/replies'; then
-          REASON="gh api requires explicit --method GET. To reply to a PR review comment, use: gh-pr-reply <owner/repo> <pull_number> <comment_id> <body>"
-        else
-          REASON="gh api requires explicit --method GET. Add --method GET to use gh api."
-        fi
-
-        jq -n --arg reason "$REASON" '{
-          hookSpecificOutput: {
-            hookEventName: "PreToolUse",
-            permissionDecision: "deny",
-            permissionDecisionReason: $reason
-          }
-        }'
-      '';
+      text = builtins.readFile ./hooks/gh-api-readonly.sh;
     };
 
     home.file.".local/bin/gh-pr-reply" = {
       executable = true;
-      text = ''
-        #!/bin/bash
-        set -euo pipefail
-        if [[ $# -ne 4 ]]; then
-          echo "Usage: gh-pr-reply <owner/repo> <pull_number> <comment_id> <body>" >&2
-          exit 1
-        fi
-        gh api --method POST \
-          -H "Accept: application/vnd.github+json" \
-          "/repos/$1/pulls/$2/comments/$3/replies" \
-          -f body="$4"
-      '';
+      text = builtins.readFile ./hooks/gh-pr-reply.sh;
     };
 
     home.file.".claude/hooks/rewrite-git-c.sh" = {
       executable = true;
-      text = ''
-        #!/bin/bash
-        set -euo pipefail
-        INPUT=$(cat)
-        COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
-
-        STRIPPED=$(echo "$COMMAND" | sed "s/'[^']*'//g" | sed 's/"[^"]*"//g')
-
-        if ! echo "$STRIPPED" | grep -qE '(^|\s)git\s.*-C\b'; then
-          exit 0
-        fi
-
-        NEW_COMMAND=$(echo "$COMMAND" | sed -E \
-          -e "s/git[[:space:]]+-C[[:space:]]+('[^']*')[[:space:]]*/cd \1 \&\& git /g" \
-          -e 's/git[[:space:]]+-C[[:space:]]+("[^"]*")[[:space:]]*/cd \1 \&\& git /g' \
-          -e 's/git[[:space:]]+-C[[:space:]]+([^[:space:]|&;]+)[[:space:]]*/cd \1 \&\& git /g')
-
-        if [[ "$NEW_COMMAND" == "$COMMAND" ]]; then
-          exit 0
-        fi
-
-        jq -n --arg cmd "$NEW_COMMAND" '{
-          updatedInput: {
-            command: $cmd
-          }
-        }'
-        exit 0
-      '';
+      text = builtins.readFile ./hooks/rewrite-git-c.sh;
     };
 
     home.file.".claude/hooks/git-readonly-approve.sh" = {
       executable = true;
-      text = ''
-        #!/bin/bash
-        INPUT=$(cat)
-        COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
-
-        STRIPPED=$(echo "$COMMAND" | sed "s/'[^']*'//g" | sed 's/"[^"]*"//g')
-
-        SAFE_SUBCMDS=" status diff log show branch rev-parse remote tag shortlog describe rev-list ls-files ls-tree ls-remote cat-file name-rev merge-base count-objects for-each-ref blame annotate grep version help "
-        SAFE_STASH=" list show "
-
-        extract_subcmd() {
-          local -a w
-          read -ra w <<< "$1"
-          [[ "''${w[0]:-}" == "git" ]] || return 1
-          local i=1 n=''${#w[@]}
-          while (( i < n )); do
-            case "''${w[i]}" in
-              -C|-c)                   (( i += 2 )) ;;
-              --git-dir|--work-tree|--namespace|--exec-path)
-                                       (( i += 2 )) ;;
-              --git-dir=*|--work-tree=*|--namespace=*|--exec-path=*|--config-env=*)
-                                       (( i += 1 )) ;;
-              --no-pager|--paginate|-p|--bare|--no-replace-objects|--literal-pathspecs|--glob-pathspecs|--noglob-pathspecs|--icase-pathspecs|--no-optional-locks|--no-lazy-fetch|--no-advice)
-                                       (( i += 1 )) ;;
-              -*)                      return 1 ;;
-              *)
-                local sub="''${w[i]}"
-                local next="''${w[i+1]:-}"
-                if [[ "$sub" == "stash" ]]; then
-                  echo "stash $next"
-                else
-                  echo "$sub"
-                fi
-                return 0
-                ;;
-            esac
-          done
-          return 1
-        }
-
-        is_safe_git() {
-          local sub
-          sub=$(extract_subcmd "$1") || return 1
-          if [[ "$sub" == stash\ * ]]; then
-            local stash_sub="''${sub#stash }"
-            [[ "$SAFE_STASH" == *" $stash_sub "* ]] && return 0
-            return 1
-          fi
-          [[ "$SAFE_SUBCMDS" == *" $sub "* ]]
-        }
-
-        NL=$'\n'
-        work="$STRIPPED"
-        work="''${work//||/$NL}"
-        work="''${work//&&/$NL}"
-        work="''${work//;/$NL}"
-        work="''${work//|/$NL}"
-
-        found_git=false
-
-        while IFS= read -r seg; do
-          seg="''${seg#"''${seg%%[![:space:]]*}"}"
-          seg="''${seg%"''${seg##*[![:space:]]}"}"
-          [[ -z "$seg" ]] && continue
-
-          if [[ "$seg" == git || "$seg" == git[[:space:]]* ]]; then
-            found_git=true
-            if ! is_safe_git "$seg"; then
-              exit 0
-            fi
-          else
-            exit 0
-          fi
-        done <<< "$work"
-
-        if $found_git; then
-          jq -n '{
-            hookSpecificOutput: {
-              hookEventName: "PreToolUse",
-              permissionDecision: "allow",
-              permissionDecisionReason: "Readonly git command auto-approved (global flags detected)."
-            }
-          }'
-        fi
-
-        exit 0
-      '';
+      text = builtins.readFile ./hooks/git-readonly-approve.sh;
     };
 
     home.file.".claude/hooks/post-git-push-watch.sh" = {
       executable = true;
-      text = ''
-        #!/bin/bash
-        INPUT=$(cat)
-        COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
-
-        STRIPPED=$(echo "$COMMAND" | sed "s/'[^']*'//g" | sed 's/"[^"]*"//g')
-
-        if ! echo "$STRIPPED" | grep -qE '(^|\s|&&|\|\||;)(git\s+push|gh\s+pr\s+create)\b'; then
-          exit 0
-        fi
-
-        sleep 3
-
-        CHECKS_OUTPUT=$(gh pr checks --watch --fail-fast 2>&1) || {
-          jq -n --arg out "$CHECKS_OUTPUT" '{
-            systemMessage: ("gh pr checks failed: " + $out)
-          }'
-          exit 0
-        }
-
-        jq -n --arg out "$CHECKS_OUTPUT" '{
-          systemMessage: ("CI checks passed:\n" + $out)
-        }'
-        exit 0
-      '';
+      text = builtins.readFile ./hooks/post-git-push-watch.sh;
     };
 
     home.file.".claude/statusline-starship.sh" = {
       executable = true;
-      text = ''
-        #!/bin/bash
-
-        input=$(cat)
-
-        cwd=$(echo "$input" | jq -r '.workspace.current_dir')
-        project_dir=$(echo "$input" | jq -r '.workspace.project_dir')
-        model=$(echo "$input" | jq -r '.model.display_name')
-        output_style=$(echo "$input" | jq -r '.output_style.name')
-
-        dir_display="''${cwd/#$HOME/~}"
-
-        git_info=""
-        if git -C "$cwd" rev-parse --git-dir &>/dev/null; then
-            branch=$(git -C "$cwd" -c core.useBuiltinFSMonitor=false -c core.untrackedCache=false branch --show-current 2>/dev/null || git -C "$cwd" -c core.useBuiltinFSMonitor=false -c core.untrackedCache=false rev-parse --short HEAD 2>/dev/null)
-            if [ -n "$branch" ]; then
-                git_info=" $(printf '\033[35m')on$(printf '\033[0m') $(printf '\033[35m')''${branch}$(printf '\033[0m')"
-            fi
-        fi
-
-        model_info=" $(printf '\033[32m')''${model}$(printf '\033[0m')"
-
-        context_info=""
-        used_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
-        remaining_pct=$(echo "$input" | jq -r '.context_window.remaining_percentage // empty')
-        if [ -n "$used_pct" ]; then
-            used_int=$(printf "%.0f" "$used_pct")
-            remaining_int=$(printf "%.0f" "$remaining_pct")
-            context_info=" $(printf '\033[33m')[ctx:''${used_int}%]$(printf '\033[0m')"
-        fi
-
-        printf "$(printf '\033[36m')%s$(printf '\033[0m')%s%s%s%s" "$dir_display" "$git_info" "$model_info" "$context_info"
-      '';
+      text = builtins.readFile ./hooks/statusline-starship.sh;
     };
   };
 }
