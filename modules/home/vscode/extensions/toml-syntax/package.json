@@ -1,0 +1,35 @@
+{
+  "name": "toml-syntax",
+  "displayName": "TOML Syntax",
+  "description": "TOML syntax highlighting",
+  "version": "1.0.0",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "toml",
+        "aliases": [
+          "TOML",
+          "toml"
+        ],
+        "extensions": [
+          ".toml"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "toml",
+        "scopeName": "source.toml",
+        "path": "./syntaxes/toml.tmLanguage.json"
+      }
+    ]
+  }
+}

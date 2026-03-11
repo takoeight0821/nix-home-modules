@@ -1,0 +1,5 @@
+#!/bin/bash
+set -euo pipefail
+
+echo "Running nix flake check..."
+nix flake check 2>&1
