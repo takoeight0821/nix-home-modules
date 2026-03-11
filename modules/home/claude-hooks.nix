@@ -34,8 +34,11 @@ let
     };
   };
 
-  mkHookAction = action:
-    { inherit (action) type command; }
+  mkHookAction =
+    action:
+    {
+      inherit (action) type command;
+    }
     // lib.optionalAttrs (action.timeout != null) { inherit (action) timeout; };
 
   mkHookEntry = entry: {
@@ -46,151 +49,150 @@ let
   settingsJson = builtins.toJSON (
     {
       permissions = {
-        allow =
-          [
-            "WebSearch"
+        allow = [
+          "WebSearch"
 
-            "Bash(git status:*)"
-            "Bash(git diff:*)"
-            "Bash(git log:*)"
-            "Bash(git show:*)"
-            "Bash(git branch:*)"
-            "Bash(git rev-parse:*)"
-            "Bash(git remote:*)"
-            "Bash(git stash list:*)"
-            "Bash(git tag:*)"
+          "Bash(git status:*)"
+          "Bash(git diff:*)"
+          "Bash(git log:*)"
+          "Bash(git show:*)"
+          "Bash(git branch:*)"
+          "Bash(git rev-parse:*)"
+          "Bash(git remote:*)"
+          "Bash(git stash list:*)"
+          "Bash(git tag:*)"
 
-            "Bash(* --version)"
-            "Bash(* --help)"
+          "Bash(* --version)"
+          "Bash(* --help)"
 
-            "Bash(gh-pr-reply:*)"
-            "Bash(gh pr view:*)"
-            "Bash(gh pr list:*)"
-            "Bash(gh pr diff:*)"
-            "Bash(gh pr checks:*)"
-            "Bash(gh issue view:*)"
-            "Bash(gh issue list:*)"
-            "Bash(gh repo view:*)"
-            "Bash(gh api --method GET:*)"
-            "Bash(gh run view:*)"
-            "Bash(gh run list:*)"
+          "Bash(gh-pr-reply:*)"
+          "Bash(gh pr view:*)"
+          "Bash(gh pr list:*)"
+          "Bash(gh pr diff:*)"
+          "Bash(gh pr checks:*)"
+          "Bash(gh issue view:*)"
+          "Bash(gh issue list:*)"
+          "Bash(gh repo view:*)"
+          "Bash(gh api --method GET:*)"
+          "Bash(gh run view:*)"
+          "Bash(gh run list:*)"
 
-            "Bash(nix build:*)"
-            "Bash(nix develop:*)"
-            "Bash(nix run:*)"
-            "Bash(nix shell:*)"
-            "Bash(nix flake:*)"
-            "Bash(nix eval:*)"
-            "Bash(nix search:*)"
-            "Bash(nix path-info:*)"
-            "Bash(nix why-depends:*)"
-            "Bash(nix log:*)"
-            "Bash(nix derivation show:*)"
-            "Bash(nix config show:*)"
-            "Bash(nix hash:*)"
-            "Bash(nix registry:*)"
-            "Bash(nix profile list:*)"
-            "Bash(nix profile diff-closures:*)"
-            "Bash(nix profile history:*)"
-            "Bash(nix store cat:*)"
-            "Bash(nix store diff-closures:*)"
-            "Bash(nix store dump-path:*)"
-            "Bash(nix store ls:*)"
-            "Bash(nix store path-info:*)"
-            "Bash(nix fmt:*)"
-            "Bash(nixfmt:*)"
-            "Bash(nix help:*)"
-            "Bash(nix repl:*)"
-            "Bash(nix-env --query:*)"
-            "Bash(nix-env -q:*)"
-            "Bash(nix-env --list-generations:*)"
+          "Bash(nix build:*)"
+          "Bash(nix develop:*)"
+          "Bash(nix run:*)"
+          "Bash(nix shell:*)"
+          "Bash(nix flake:*)"
+          "Bash(nix eval:*)"
+          "Bash(nix search:*)"
+          "Bash(nix path-info:*)"
+          "Bash(nix why-depends:*)"
+          "Bash(nix log:*)"
+          "Bash(nix derivation show:*)"
+          "Bash(nix config show:*)"
+          "Bash(nix hash:*)"
+          "Bash(nix registry:*)"
+          "Bash(nix profile list:*)"
+          "Bash(nix profile diff-closures:*)"
+          "Bash(nix profile history:*)"
+          "Bash(nix store cat:*)"
+          "Bash(nix store diff-closures:*)"
+          "Bash(nix store dump-path:*)"
+          "Bash(nix store ls:*)"
+          "Bash(nix store path-info:*)"
+          "Bash(nix fmt:*)"
+          "Bash(nixfmt:*)"
+          "Bash(nix help:*)"
+          "Bash(nix repl:*)"
+          "Bash(nix-env --query:*)"
+          "Bash(nix-env -q:*)"
+          "Bash(nix-env --list-generations:*)"
 
-            "Bash(brew list:*)"
-            "Bash(brew info:*)"
-            "Bash(brew search:*)"
+          "Bash(brew list:*)"
+          "Bash(brew info:*)"
+          "Bash(brew search:*)"
 
-            "Bash(cat:*)"
-            "Bash(head:*)"
-            "Bash(tail:*)"
-            "Bash(echo:*)"
-            "Bash(ls:*)"
-            "Bash(pwd)"
-            "Bash(dirname:*)"
-            "Bash(basename:*)"
-            "Bash(realpath:*)"
-            "Bash(type:*)"
+          "Bash(cat:*)"
+          "Bash(head:*)"
+          "Bash(tail:*)"
+          "Bash(echo:*)"
+          "Bash(ls:*)"
+          "Bash(pwd)"
+          "Bash(dirname:*)"
+          "Bash(basename:*)"
+          "Bash(realpath:*)"
+          "Bash(type:*)"
 
-            "Bash(jq:*)"
-            "Bash(rg:*)"
-            "Bash(grep:*)"
-            "Bash(diff:*)"
-            "Bash(uniq:*)"
-            "Bash(tr:*)"
-            "Bash(cut:*)"
-            "Bash(sed:*)"
-            "Bash(find:*)"
-            "Bash(fd:*)"
-            "Bash(sort:*)"
+          "Bash(jq:*)"
+          "Bash(rg:*)"
+          "Bash(grep:*)"
+          "Bash(diff:*)"
+          "Bash(uniq:*)"
+          "Bash(tr:*)"
+          "Bash(cut:*)"
+          "Bash(sed:*)"
+          "Bash(find:*)"
+          "Bash(fd:*)"
+          "Bash(sort:*)"
 
-            "Bash(file:*)"
-            "Bash(stat:*)"
-            "Bash(tree:*)"
-            "Bash(du:*)"
-            "Bash(df:*)"
+          "Bash(file:*)"
+          "Bash(stat:*)"
+          "Bash(tree:*)"
+          "Bash(du:*)"
+          "Bash(df:*)"
 
-            "Bash(date:*)"
-            "Bash(printenv:*)"
-            "Bash(uname:*)"
+          "Bash(date:*)"
+          "Bash(printenv:*)"
+          "Bash(uname:*)"
 
-            "Bash(ghq list:*)"
-            "Bash(code:*)"
-            "Bash(which:*)"
-            "Bash(wc:*)"
-            "Bash(delta:*)"
-            "Bash(tmux:*)"
+          "Bash(ghq list:*)"
+          "Bash(code:*)"
+          "Bash(which:*)"
+          "Bash(wc:*)"
+          "Bash(delta:*)"
+          "Bash(tmux:*)"
 
-            "mcp__aws__aws___search_documentation"
-            "mcp__aws__aws___read_documentation"
-            "mcp__aws__aws___recommend"
-            "mcp__aws__aws___list_regions"
-            "mcp__aws__aws___get_regional_availability"
+          "mcp__aws__aws___search_documentation"
+          "mcp__aws__aws___read_documentation"
+          "mcp__aws__aws___recommend"
+          "mcp__aws__aws___list_regions"
+          "mcp__aws__aws___get_regional_availability"
 
-            "WebFetch(domain:github.com)"
-            "WebFetch(domain:raw.githubusercontent.com)"
-            "WebFetch(domain:gist.github.com)"
-            "WebFetch(domain:nixos.org)"
-            "WebFetch(domain:nixos.wiki)"
-            "WebFetch(domain:nix-darwin.github.io)"
-            "WebFetch(domain:marketplace.visualstudio.com)"
-            "WebFetch(domain:code.visualstudio.com)"
-          ]
-          ++ cfg.extraAllowPermissions;
+          "WebFetch(domain:github.com)"
+          "WebFetch(domain:raw.githubusercontent.com)"
+          "WebFetch(domain:gist.github.com)"
+          "WebFetch(domain:nixos.org)"
+          "WebFetch(domain:nixos.wiki)"
+          "WebFetch(domain:nix-darwin.github.io)"
+          "WebFetch(domain:marketplace.visualstudio.com)"
+          "WebFetch(domain:code.visualstudio.com)"
+        ]
+        ++ cfg.extraAllowPermissions;
         deny = [
           "Read(.env*)"
           "Read(secrets/**)"
-        ] ++ cfg.extraDenyPermissions;
+        ]
+        ++ cfg.extraDenyPermissions;
         ask = [ ];
       };
       statusLine = {
         type = "command";
         command = "bash ~/.claude/statusline-starship.sh";
       };
-      enabledPlugins =
-        {
-          "claude-md-management@claude-plugins-official" = true;
-          "code-review@claude-plugins-official" = true;
-          "code-simplifier@claude-plugins-official" = true;
-          "commit-commands@claude-plugins-official" = true;
-          "feature-dev@claude-plugins-official" = true;
-          "gopls-lsp@claude-plugins-official" = true;
-          "hookify@claude-plugins-official" = false;
-          "plugin-dev@claude-plugins-official" = true;
-          "pr-review-toolkit@claude-plugins-official" = true;
-          "ralph-loop@claude-plugins-official" = true;
-          "security-guidance@claude-plugins-official" = true;
-          "typescript-lsp@claude-plugins-official" = true;
-        }
-        // cfg.extraEnabledPlugins;
+      enabledPlugins = {
+        "claude-md-management@claude-plugins-official" = true;
+        "code-review@claude-plugins-official" = true;
+        "code-simplifier@claude-plugins-official" = true;
+        "commit-commands@claude-plugins-official" = true;
+        "feature-dev@claude-plugins-official" = true;
+        "gopls-lsp@claude-plugins-official" = true;
+        "hookify@claude-plugins-official" = false;
+        "plugin-dev@claude-plugins-official" = true;
+        "pr-review-toolkit@claude-plugins-official" = true;
+        "ralph-loop@claude-plugins-official" = true;
+        "security-guidance@claude-plugins-official" = true;
+        "typescript-lsp@claude-plugins-official" = true;
+      }
+      // cfg.extraEnabledPlugins;
       env = {
         CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
       };
@@ -209,96 +211,94 @@ let
             ];
           }
         ];
-        PreToolUse =
-          [
-            {
-              matcher = "Bash";
-              hooks = [
-                {
-                  type = "command";
-                  command = "bash ~/.claude/hooks/prefer-deno.sh";
-                }
-              ];
-            }
-            {
-              matcher = "Bash";
-              hooks = [
-                {
-                  type = "command";
-                  command = "bash ~/.claude/hooks/prefer-jq.sh";
-                }
-              ];
-            }
-            {
-              matcher = "Bash";
-              hooks = [
-                {
-                  type = "command";
-                  command = "bash ~/.claude/hooks/block-dangerous-flags.sh";
-                }
-              ];
-            }
-            {
-              matcher = "Bash";
-              hooks = [
-                {
-                  type = "command";
-                  command = "bash ~/.claude/hooks/rewrite-git-c.sh";
-                }
-              ];
-            }
-            {
-              matcher = "Bash";
-              hooks = [
-                {
-                  type = "command";
-                  command = "bash ~/.claude/hooks/git-readonly-approve.sh";
-                }
-              ];
-            }
-            {
-              matcher = "Bash";
-              hooks = [
-                {
-                  type = "command";
-                  command = "bash ~/.claude/hooks/gh-api-readonly.sh";
-                }
-              ];
-            }
-          ]
-          ++ (map mkHookEntry cfg.extraPreToolUseHooks);
-        PostToolUse =
-          [
-            {
-              matcher = "Bash";
-              hooks = [
-                {
-                  type = "command";
-                  command = "bash ~/.claude/hooks/post-git-push-watch.sh";
-                  timeout = 120;
-                }
-              ];
-            }
-            {
-              matcher = "Edit|Write";
-              hooks = [
-                {
-                  type = "command";
-                  command = "if echo \"$CLAUDE_FILE_PATHS\" | grep -q '\\.go$'; then go fmt ./... && go vet ./... && if command -v golangci-lint >/dev/null 2>&1; then golangci-lint run --new-from-rev=HEAD ./... 2>&1 | head -30; fi; fi";
-                }
-              ];
-            }
-            {
-              matcher = "Edit|Write";
-              hooks = [
-                {
-                  type = "command";
-                  command = "if echo \"$CLAUDE_FILE_PATHS\" | grep -q '\\.ts$'; then pnpm dlx tsc --noEmit; fi";
-                }
-              ];
-            }
-          ]
-          ++ (map mkHookEntry cfg.extraPostToolUseHooks);
+        PreToolUse = [
+          {
+            matcher = "Bash";
+            hooks = [
+              {
+                type = "command";
+                command = "bash ~/.claude/hooks/log-wrapper.sh prefer-deno ~/.claude/hooks/prefer-deno.sh";
+              }
+            ];
+          }
+          {
+            matcher = "Bash";
+            hooks = [
+              {
+                type = "command";
+                command = "bash ~/.claude/hooks/log-wrapper.sh prefer-jq ~/.claude/hooks/prefer-jq.sh";
+              }
+            ];
+          }
+          {
+            matcher = "Bash";
+            hooks = [
+              {
+                type = "command";
+                command = "bash ~/.claude/hooks/log-wrapper.sh block-dangerous-flags ~/.claude/hooks/block-dangerous-flags.sh";
+              }
+            ];
+          }
+          {
+            matcher = "Bash";
+            hooks = [
+              {
+                type = "command";
+                command = "bash ~/.claude/hooks/log-wrapper.sh rewrite-git-c ~/.claude/hooks/rewrite-git-c.sh";
+              }
+            ];
+          }
+          {
+            matcher = "Bash";
+            hooks = [
+              {
+                type = "command";
+                command = "bash ~/.claude/hooks/log-wrapper.sh git-readonly-approve ~/.claude/hooks/git-readonly-approve.sh";
+              }
+            ];
+          }
+          {
+            matcher = "Bash";
+            hooks = [
+              {
+                type = "command";
+                command = "bash ~/.claude/hooks/log-wrapper.sh gh-api-readonly ~/.claude/hooks/gh-api-readonly.sh";
+              }
+            ];
+          }
+        ]
+        ++ (map mkHookEntry cfg.extraPreToolUseHooks);
+        PostToolUse = [
+          {
+            matcher = "Bash";
+            hooks = [
+              {
+                type = "command";
+                command = "bash ~/.claude/hooks/log-wrapper.sh post-git-push-watch ~/.claude/hooks/post-git-push-watch.sh";
+                timeout = 120;
+              }
+            ];
+          }
+          {
+            matcher = "Edit|Write";
+            hooks = [
+              {
+                type = "command";
+                command = "if echo \"$CLAUDE_FILE_PATHS\" | grep -q '\\.go$'; then go fmt ./... && go vet ./... && if command -v golangci-lint >/dev/null 2>&1; then golangci-lint run --new-from-rev=HEAD ./... 2>&1 | head -30; fi; fi";
+              }
+            ];
+          }
+          {
+            matcher = "Edit|Write";
+            hooks = [
+              {
+                type = "command";
+                command = "if echo \"$CLAUDE_FILE_PATHS\" | grep -q '\\.ts$'; then pnpm dlx tsc --noEmit; fi";
+              }
+            ];
+          }
+        ]
+        ++ (map mkHookEntry cfg.extraPostToolUseHooks);
       };
     }
     // cfg.extraSettings
@@ -387,6 +387,11 @@ in
 
     home.file.".claude/CLAUDE.md" = {
       text = claudeMdContent;
+    };
+
+    home.file.".claude/hooks/log-wrapper.sh" = {
+      executable = true;
+      text = builtins.readFile ./hooks/log-wrapper.sh;
     };
 
     home.file.".claude/hooks/prefer-deno.sh" = {

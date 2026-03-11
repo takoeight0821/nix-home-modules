@@ -60,6 +60,8 @@ in
           grep = "grep --color=auto";
           df = "df -h";
           du = "du -h";
+
+          hooklog = "less +F ~/.claude/hooks.log";
         }
         // lib.optionalAttrs (cfg.darwinRebuildFlakeRef != "") {
           nrs = "darwin-rebuild switch --flake ${cfg.darwinRebuildFlakeRef}";
