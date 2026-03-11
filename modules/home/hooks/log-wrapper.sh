@@ -33,8 +33,18 @@ if [[ -n "$stdout_data" ]]; then
   fi
 fi
 
+rewritten=""
+if [[ "$result" == "rewrite" ]]; then
+  rewritten=$(printf '%s' "$stdout_data" | jq -r '.updatedInput.command // .tool_input.command // ""' 2>/dev/null || true)
+  rewritten="${rewritten:0:80}"
+fi
+
 timestamp=$(date +%H:%M:%S)
-printf '%s [%s] %s cmd="%s"\n' "$timestamp" "$HOOK_NAME" "$result" "$cmd" >> "$LOG_FILE"
+if [[ -n "$rewritten" ]]; then
+  printf '%s [%s] %s cmd="%s" -> "%s"\n' "$timestamp" "$HOOK_NAME" "$result" "$cmd" "$rewritten" >> "$LOG_FILE"
+else
+  printf '%s [%s] %s cmd="%s"\n' "$timestamp" "$HOOK_NAME" "$result" "$cmd" >> "$LOG_FILE"
+fi
 
 if [[ -n "$stdout_data" ]]; then
   printf '%s' "$stdout_data"
