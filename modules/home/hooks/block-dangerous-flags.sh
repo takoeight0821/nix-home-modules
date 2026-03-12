@@ -17,6 +17,7 @@
 #
 # Dependencies: jq, sed, grep
 
+set -euo pipefail
 INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
 
@@ -34,7 +35,7 @@ deny() {
 }
 
 if echo "$STRIPPED" | grep -qE '(^|\s|&&|\|\||;)sed\b' && \
-   echo "$STRIPPED" | grep -qE '\s-[^\s]*i|\s--in-place\b'; then
+   echo "$STRIPPED" | grep -qE '[[:space:]]-[^[:space:]]*i|[[:space:]]--in-place\b'; then
   deny "sed -i (in-place edit) is not allowed. Use sed without -i to output to stdout."
 fi
 

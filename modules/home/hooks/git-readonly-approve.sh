@@ -17,6 +17,7 @@
 #
 # Dependencies: jq, sed
 
+set -euo pipefail
 INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
 
