@@ -239,15 +239,7 @@ let
               }
             ];
           }
-          {
-            matcher = "Bash";
-            hooks = [
-              {
-                type = "command";
-                command = "bash ~/.claude/hooks/log-wrapper.sh rewrite-git-c ~/.claude/hooks/rewrite-git-c.sh";
-              }
-            ];
-          }
+
           {
             matcher = "Bash";
             hooks = [
@@ -417,11 +409,6 @@ in
     home.file.".local/bin/gh-pr-reply" = {
       executable = true;
       text = builtins.readFile ./hooks/gh-pr-reply.sh;
-    };
-
-    home.file.".claude/hooks/rewrite-git-c.sh" = {
-      executable = true;
-      text = builtins.readFile ./hooks/rewrite-git-c.sh;
     };
 
     home.file.".claude/hooks/git-readonly-approve.sh" = {

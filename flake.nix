@@ -97,26 +97,6 @@
                 bash ${./tests/test-git-readonly-approve.sh} --script "$HOOK_SCRIPT"
                 touch $out
               '';
-
-          test-rewrite-git-c =
-            pkgs.runCommand "test-rewrite-git-c"
-              {
-                nativeBuildInputs = [
-                  pkgs.bash
-                  pkgs.jq
-                  pkgs.gnugrep
-                  pkgs.gnused
-                ];
-              }
-              ''
-                HOOK_SCRIPT=$(mktemp)
-                cat > "$HOOK_SCRIPT" <<'HOOKEOF'
-                ${testHome.file.".claude/hooks/rewrite-git-c.sh".text}
-                HOOKEOF
-                chmod +x "$HOOK_SCRIPT"
-                bash ${./tests/test-rewrite-git-c.sh} --script "$HOOK_SCRIPT"
-                touch $out
-              '';
         }
       );
     };
