@@ -166,11 +166,15 @@ let
           "WebFetch(domain:nix-darwin.github.io)"
           "WebFetch(domain:marketplace.visualstudio.com)"
           "WebFetch(domain:code.visualstudio.com)"
+          "Read(~/.claude/**)"
         ]
         ++ cfg.extraAllowPermissions;
         deny = [
           "Read(.env*)"
           "Read(secrets/**)"
+          "Bash(git -C:*)"
+          "Write(~/.claude/**)"
+          "Edit(~/.claude/**)"
         ]
         ++ cfg.extraDenyPermissions;
         ask = [ ];

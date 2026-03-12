@@ -12,7 +12,6 @@ All hooks are Bash scripts that receive JSON via stdin and output JSON to stdout
 | `git-readonly-approve.sh` | PreToolUse | allow | Auto-approves read-only git commands (`status`, `diff`, `log`, etc.) |
 | `prefer-deno.sh` | PreToolUse | suggest | Suggests Deno when Python is used |
 | `prefer-jq.sh` | PreToolUse | rewrite | Rewrites `python -m json.tool` to `jq .` |
-| `rewrite-git-c.sh` | PreToolUse | rewrite | Rewrites `git -C <path>` to `cd <path> && git` |
 | `gh-api-readonly.sh` | PreToolUse | deny | Requires `--method GET` on `gh api` calls |
 | `gh-pr-reply.sh` | Helper | — | PR review comment reply script (installed to `~/.local/bin/`) |
 | `post-git-push-watch.sh` | PostToolUse | watch | Monitors CI checks after `git push` / `gh pr create` |
@@ -57,10 +56,6 @@ When a Bash command contains `python` or `python3` (outside quoted strings), out
 Detects `python3? -m json.tool` patterns (outside quoted strings) and rewrites the command to use `jq .` instead.
 
 **Output:** `{ "tool_input": { "command": "<rewritten>" } }` or empty.
-
-### rewrite-git-c.sh
-
-Rewrites `git -C <path> <args>` to `cd <path> && git <args>` for better compatibility. Handles single-quoted, double-quoted, and unquoted paths, as well as pipes and chained commands.
 
 ### gh-api-readonly.sh
 

@@ -16,7 +16,6 @@ All tests run in a sandboxed Nix build environment. They build a home-manager co
 |---|---|---|
 | `test-block-dangerous-flags` | `block-dangerous-flags.sh` | ~50 cases |
 | `test-git-readonly-approve` | `git-readonly-approve.sh` | ~50 cases |
-| `test-rewrite-git-c` | `rewrite-git-c.sh` | ~15 cases |
 
 ## How Tests Work
 
@@ -40,12 +39,6 @@ Each test script:
 - Fallthrough: write operations (`push`, `commit`, `reset`, `checkout`)
 - Chain handling: `safe && safe`, `safe && unsafe`
 - False positive prevention: git commands inside `echo` or commit messages
-
-**test-rewrite-git-c.sh:**
-- Basic rewriting: `git -C /path log` → `cd /path && git log`
-- Quoted paths: single and double-quoted paths with spaces
-- Pipes and chains: `git -C /path log | head`
-- No-rewrite: commands without `-C`, unrelated commands
 
 ## Adding New Tests
 

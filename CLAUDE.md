@@ -49,12 +49,11 @@ nix fmt            # Format all .nix files
 
 ## Tests
 
-Three hook test suites run via `nix flake check`:
+Two hook test suites run via `nix flake check`:
 
 | Test | What it tests |
 |---|---|
 | `test-block-dangerous-flags` | Destructive command blocking (~50 cases) |
 | `test-git-readonly-approve` | Read-only git auto-approval (~50 cases) |
-| `test-rewrite-git-c` | `git -C` rewriting (~15 cases) |
 
 See [tests/README.md](tests/README.md) for details.
