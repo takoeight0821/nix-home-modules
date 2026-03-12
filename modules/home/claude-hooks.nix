@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  nhm-lib,
   ...
 }:
 let
@@ -373,9 +374,32 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.file.".claude/settings.json" = {
-      text = settingsJson;
-    };
+    home.activation.claudeSettings =
+      let
+        targetPath = ".claude/settings.json";
+      in
+      lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        configFile="$HOME/${targetPath}"
+        baselineFile="$HOME/${targetPath}.nix-baseline"
+        mkdir -p "$(dirname "$configFile")"
+
+        if [ -L "$configFile" ]; then
+          rm "$configFile"
+        fi
+
+        newContent=$(echo '${settingsJson}' | ${pkgs.jq}/bin/jq .)
+
+        if [ ! -f "$baselineFile" ] || [ "$(cat "$baselineFile")" != "$newContent" ]; then
+          if [ -f "$configFile" ] && [ -f "$baselineFile" ]; then
+            if ! ${pkgs.diffutils}/bin/diff -q "$baselineFile" "$configFile" > /dev/null 2>&1; then
+              echo "WARNING [claude-settings]: runtime changes will be overwritten by updated Nix config:"
+              ${pkgs.diffutils}/bin/diff -u "$baselineFile" "$configFile" || true
+            fi
+          fi
+          echo "$newContent" > "$configFile"
+          echo "$newContent" > "$baselineFile"
+        fi
+      '';
 
     home.file.".claude/CLAUDE.md" = {
       text = claudeMdContent;
