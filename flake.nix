@@ -97,6 +97,26 @@
                 bash ${./tests/test-git-readonly-approve.sh} --script "$HOOK_SCRIPT"
                 touch $out
               '';
+
+          test-gh-api-readonly =
+            pkgs.runCommand "test-gh-api-readonly"
+              {
+                nativeBuildInputs = [
+                  pkgs.bash
+                  pkgs.jq
+                  pkgs.gnugrep
+                  pkgs.gnused
+                ];
+              }
+              ''
+                HOOK_SCRIPT=$(mktemp)
+                cat > "$HOOK_SCRIPT" <<'HOOKEOF'
+                ${testHome.file.".claude/hooks/gh-api-readonly.sh".text}
+                HOOKEOF
+                chmod +x "$HOOK_SCRIPT"
+                bash ${./tests/test-gh-api-readonly.sh} --script "$HOOK_SCRIPT"
+                touch $out
+              '';
         }
       );
     };
