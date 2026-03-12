@@ -387,7 +387,10 @@ in
           rm "$configFile"
         fi
 
-        newContent=$(echo '${settingsJson}' | ${pkgs.jq}/bin/jq .)
+        newContent=$(${pkgs.jq}/bin/jq . <<'NIXJSONEOF'
+${settingsJson}
+NIXJSONEOF
+)
 
         if [ ! -f "$baselineFile" ] || [ "$(cat "$baselineFile")" != "$newContent" ]; then
           if [ -f "$configFile" ] && [ -f "$baselineFile" ]; then
