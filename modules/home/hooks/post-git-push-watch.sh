@@ -20,7 +20,9 @@ if ! echo "$STRIPPED" | grep -qE '(^|\s|&&|\|\||;)(git\s+push|gh\s+pr\s+create)\
   exit 0
 fi
 
-sleep 3
+if ! gh pr view --json number >/dev/null 2>&1; then
+  exit 0
+fi
 
 CHECKS_OUTPUT=$(gh pr checks --watch --fail-fast 2>&1) || {
   jq -n --arg out "$CHECKS_OUTPUT" '{
