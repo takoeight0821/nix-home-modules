@@ -18,7 +18,6 @@ input=$(cat)
 cwd=$(echo "$input" | jq -r '.workspace.current_dir')
 project_dir=$(echo "$input" | jq -r '.workspace.project_dir')
 model=$(echo "$input" | jq -r '.model.display_name')
-output_style=$(echo "$input" | jq -r '.output_style.name')
 
 dir_display="${cwd/#$HOME/~}"
 
