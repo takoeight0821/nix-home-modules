@@ -240,6 +240,24 @@ let
             hooks = [
               {
                 type = "command";
+                command = "bash ~/.claude/hooks/log-wrapper.sh prefer-grep-tool ~/.claude/hooks/prefer-grep-tool.sh";
+              }
+            ];
+          }
+          {
+            matcher = "Bash";
+            hooks = [
+              {
+                type = "command";
+                command = "bash ~/.claude/hooks/log-wrapper.sh prefer-glob-tool ~/.claude/hooks/prefer-glob-tool.sh";
+              }
+            ];
+          }
+          {
+            matcher = "Bash";
+            hooks = [
+              {
+                type = "command";
                 command = "bash ~/.claude/hooks/log-wrapper.sh block-dangerous-flags ~/.claude/hooks/block-dangerous-flags.sh";
               }
             ];
@@ -383,29 +401,29 @@ in
         targetPath = ".claude/settings.json";
       in
       lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        configFile="$HOME/${targetPath}"
-        baselineFile="$HOME/${targetPath}.nix-baseline"
-        mkdir -p "$(dirname "$configFile")"
+                configFile="$HOME/${targetPath}"
+                baselineFile="$HOME/${targetPath}.nix-baseline"
+                mkdir -p "$(dirname "$configFile")"
 
-        if [ -L "$configFile" ]; then
-          rm "$configFile"
-        fi
+                if [ -L "$configFile" ]; then
+                  rm "$configFile"
+                fi
 
-        newContent=$(${pkgs.jq}/bin/jq . <<'NIXJSONEOF'
-${settingsJson}
-NIXJSONEOF
-)
+                newContent=$(${pkgs.jq}/bin/jq . <<'NIXJSONEOF'
+        ${settingsJson}
+        NIXJSONEOF
+        )
 
-        if [ ! -f "$baselineFile" ] || [ "$(cat "$baselineFile")" != "$newContent" ]; then
-          if [ -f "$configFile" ] && [ -f "$baselineFile" ]; then
-            if ! ${pkgs.diffutils}/bin/diff -q "$baselineFile" "$configFile" > /dev/null 2>&1; then
-              echo "WARNING [claude-settings]: runtime changes will be overwritten by updated Nix config:"
-              ${pkgs.diffutils}/bin/diff -u "$baselineFile" "$configFile" || true
-            fi
-          fi
-          echo "$newContent" > "$configFile"
-          echo "$newContent" > "$baselineFile"
-        fi
+                if [ ! -f "$baselineFile" ] || [ "$(cat "$baselineFile")" != "$newContent" ]; then
+                  if [ -f "$configFile" ] && [ -f "$baselineFile" ]; then
+                    if ! ${pkgs.diffutils}/bin/diff -q "$baselineFile" "$configFile" > /dev/null 2>&1; then
+                      echo "WARNING [claude-settings]: runtime changes will be overwritten by updated Nix config:"
+                      ${pkgs.diffutils}/bin/diff -u "$baselineFile" "$configFile" || true
+                    fi
+                  fi
+                  echo "$newContent" > "$configFile"
+                  echo "$newContent" > "$baselineFile"
+                fi
       '';
 
     home.file.".claude/CLAUDE.md" = {
@@ -425,6 +443,16 @@ NIXJSONEOF
     home.file.".claude/hooks/prefer-jq.sh" = {
       executable = true;
       text = builtins.readFile ./hooks/prefer-jq.sh;
+    };
+
+    home.file.".claude/hooks/prefer-grep-tool.sh" = {
+      executable = true;
+      text = builtins.readFile ./hooks/prefer-grep-tool.sh;
+    };
+
+    home.file.".claude/hooks/prefer-glob-tool.sh" = {
+      executable = true;
+      text = builtins.readFile ./hooks/prefer-glob-tool.sh;
     };
 
     home.file.".claude/hooks/block-dangerous-flags.sh" = {
