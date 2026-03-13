@@ -203,17 +203,6 @@ let
       language = "日本語";
       cleanupPeriodDays = 365;
       hooks = {
-        Notification = [
-          {
-            matcher = "";
-            hooks = [
-              {
-                type = "command";
-                command = "msg=$(cat | jq -r '.notification.message // \"Notification\"'); /usr/bin/osascript -e \"display notification \\\"$msg\\\" with title \\\"Claude Code\\\" sound name \\\"Glass\\\"\" &";
-              }
-            ];
-          }
-        ];
         PreToolUse = [
           {
             matcher = "Bash";
