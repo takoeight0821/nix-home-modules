@@ -173,8 +173,6 @@ let
           "Read(.env*)"
           "Read(secrets/**)"
           "Bash(git -C:*)"
-          "Write(~/.claude/**)"
-          "Edit(~/.claude/**)"
         ]
         ++ cfg.extraDenyPermissions;
         ask = [ ];
