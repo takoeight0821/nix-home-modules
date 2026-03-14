@@ -30,7 +30,6 @@ in
         font-family = cfg.fontFamily;
         font-size = cfg.fontSize;
         desktop-notifications = true;
-        audible-bell = true;
       };
     };
   };
