@@ -10,6 +10,10 @@ if ! echo "$STRIPPED" | grep -qE '(^|\s|&&|\|\||;)(find|fd)\b'; then
 fi
 
 jq -n '{
-  systemMessage: "Use the Glob tool instead of find/fd in Bash. The Glob tool provides better output formatting and respects permission settings."
+  hookSpecificOutput: {
+    hookEventName: "PreToolUse",
+    permissionDecision: "deny",
+    permissionDecisionReason: "Use the Glob tool instead of find/fd in Bash. The Glob tool provides better output formatting and respects permission settings."
+  }
 }'
 exit 0

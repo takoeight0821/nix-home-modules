@@ -10,6 +10,10 @@ if ! echo "$STRIPPED" | grep -qE '(^|\s|&&|\|\||;)(grep|rg)\b'; then
 fi
 
 jq -n '{
-  systemMessage: "Use the Grep tool instead of grep/rg in Bash. The Grep tool provides better output formatting and respects permission settings."
+  hookSpecificOutput: {
+    hookEventName: "PreToolUse",
+    permissionDecision: "deny",
+    permissionDecisionReason: "Use the Grep tool instead of grep/rg in Bash. The Grep tool provides better output formatting and respects permission settings."
+  }
 }'
 exit 0
