@@ -77,6 +77,7 @@ let
           "Bash(gh api --method GET:*)"
           "Bash(gh run view:*)"
           "Bash(gh run list:*)"
+          "Bash(gh run watch:*)"
 
           "Bash(nix build:*)"
           "Bash(nix develop:*)"
