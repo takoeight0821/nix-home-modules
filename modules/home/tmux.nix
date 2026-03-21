@@ -170,9 +170,12 @@ let
           fi
           local cur_in_window
           cur_in_window="$(tmux list-panes -t "$cf_window" -F '#{pane_id}' | tr '\n' ' ')"
-          if ! echo " $cur_in_window " | grep -q " $p "; then
-            tmux join-pane -h -s "$p" -t "$prev"
+          if echo " $cur_in_window " | grep -q " $p "; then
+            if [ "$(tmux list-panes -t "$cf_window" | wc -l | tr -d ' ')" -gt 1 ]; then
+              tmux break-pane -d -s "$p"
+            fi
           fi
+          tmux join-pane -h -s "$p" -t "$prev"
           prev="$p"
         done
 
