@@ -87,17 +87,14 @@ let
           return
         fi
 
-        if [ "$cf_index" -eq 0 ]; then
+        if [ "$total" -eq 2 ]; then
           echo "0 1"
           return
         fi
 
-        if [ "$cf_index" -eq $((total - 1)) ]; then
-          echo "$((total - 2)) $((total - 1))"
-          return
-        fi
-
-        echo "$((cf_index - 1)) $cf_index $((cf_index + 1))"
+        local left=$(( (cf_index - 1 + total) % total ))
+        local right=$(( (cf_index + 1) % total ))
+        echo "$left $cf_index $right"
       }
 
       nth_pane() {
@@ -191,7 +188,7 @@ let
           2)
             local first_p
             first_p="$(echo "$visible_panes" | awk '{print $1}')"
-            if [ "$cf_index" -eq 0 ]; then
+            if [ "$first_p" = "$focus_pane" ]; then
               tmux resize-pane -t "$first_p" -x 70%
             else
               tmux resize-pane -t "$first_p" -x 30%
@@ -262,7 +259,8 @@ let
       cmd_left() {
         scrub_list
 
-        local cf_index cf_window
+        local cf_list cf_index cf_window
+        cf_list="$(get_opt @cf_list)"
         cf_index="$(get_opt @cf_index)"
         cf_window="$(get_opt @cf_window)"
 
@@ -271,11 +269,11 @@ let
           return 1
         fi
 
-        if [ "$cf_index" -le 0 ]; then
-          return 0
-        fi
+        local total
+        total="$(echo "$cf_list" | wc -w | tr -d ' ')"
 
-        set_opt @cf_index "$((cf_index - 1))"
+        local new_index=$(( (cf_index - 1 + total) % total ))
+        set_opt @cf_index "$new_index"
         apply_layout
       }
 
@@ -295,11 +293,8 @@ let
         local total
         total="$(echo "$cf_list" | wc -w | tr -d ' ')"
 
-        if [ "$cf_index" -ge $((total - 1)) ]; then
-          return 0
-        fi
-
-        set_opt @cf_index "$((cf_index + 1))"
+        local new_index=$(( (cf_index + 1) % total ))
+        set_opt @cf_index "$new_index"
         apply_layout
       }
 
