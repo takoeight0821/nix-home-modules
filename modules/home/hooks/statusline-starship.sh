@@ -6,6 +6,7 @@
 #   - Git branch name (in magenta)
 #   - Model name (in green)
 #   - Context window usage percentage (in yellow)
+#   - Rate limit usage: 5-hour and 7-day (in red, when available)
 #
 # Usage: Set as statusLine command in Claude Code settings.
 #   Input: JSON from stdin with workspace, model, and context_window info
@@ -40,4 +41,24 @@ if [ -n "$used_pct" ]; then
     context_info=" $(printf '\033[33m')[ctx:${used_int}%]$(printf '\033[0m')"
 fi
 
-printf "$(printf '\033[36m')%s$(printf '\033[0m')%s%s%s%s" "$dir_display" "$git_info" "$model_info" "$context_info"
+rate_info=""
+five_pct=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
+week_pct=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
+rate_parts=""
+if [ -n "$five_pct" ]; then
+    five_int=$(printf "%.0f" "$five_pct")
+    rate_parts="5h:${five_int}%"
+fi
+if [ -n "$week_pct" ]; then
+    week_int=$(printf "%.0f" "$week_pct")
+    if [ -n "$rate_parts" ]; then
+        rate_parts="${rate_parts} 7d:${week_int}%"
+    else
+        rate_parts="7d:${week_int}%"
+    fi
+fi
+if [ -n "$rate_parts" ]; then
+    rate_info=" $(printf '\033[31m')[${rate_parts}]$(printf '\033[0m')"
+fi
+
+printf "$(printf '\033[36m')%s$(printf '\033[0m')%s%s%s%s" "$dir_display" "$git_info" "$model_info" "$context_info""$rate_info"
