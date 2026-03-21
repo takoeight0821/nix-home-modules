@@ -451,6 +451,7 @@ in
           ];
           extraConfig = ''
             set -ag terminal-overrides ",xterm-256color:RGB"
+            set -ag terminal-overrides ",xterm-ghostty:RGB"
             set -g focus-events on
             set -g set-clipboard on
 
