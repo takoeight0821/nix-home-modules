@@ -302,6 +302,17 @@ let
           }
         ]
         ++ (map mkHookEntry cfg.extraPostToolUseHooks);
+        Notification = [
+          {
+            matcher = "";
+            hooks = [
+              {
+                type = "command";
+                command = "bash ~/.claude/hooks/notify-osc9.sh";
+              }
+            ];
+          }
+        ];
       };
     }
     // cfg.extraSettings
@@ -466,6 +477,11 @@ in
     home.file.".claude/hooks/post-git-push-watch.sh" = {
       executable = true;
       text = builtins.readFile ./hooks/post-git-push-watch.sh;
+    };
+
+    home.file.".claude/hooks/notify-osc9.sh" = {
+      executable = true;
+      text = builtins.readFile ./hooks/notify-osc9.sh;
     };
 
     home.file.".claude/statusline-starship.sh" = {
