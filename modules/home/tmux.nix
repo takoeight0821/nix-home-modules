@@ -454,6 +454,11 @@ in
             set -g focus-events on
             set -g set-clipboard on
 
+            # Bell forwarding for desktop notifications (e.g. Claude Code hooks)
+            set -g bell-action any
+            set -g monitor-bell on
+            set -g visual-bell off
+
             bind h select-pane -L
             bind j select-pane -D
             bind k select-pane -U
