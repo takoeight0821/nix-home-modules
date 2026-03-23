@@ -448,8 +448,8 @@ in
             }
           ];
           extraConfig = ''
-            set -as terminal-features ",xterm-256color:RGB"
-            set -as terminal-features ",xterm-ghostty:RGB:hyperlinks"
+            set -as terminal-features "xterm-256color:RGB"
+            set -as terminal-features "xterm-ghostty:RGB:hyperlinks"
             set -g allow-passthrough on
             set -g focus-events on
             set -g set-clipboard on
