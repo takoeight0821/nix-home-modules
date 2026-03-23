@@ -7,29 +7,6 @@
 let
   cfg = config.takoeight0821.programs.tmux;
 
-  # Custom tmux-256color terminfo with true color (RGB) support.
-  # The default tmux-256color terminfo lacks Tc/setrgbf/setrgbb,
-  # causing applications (e.g. Claude Code) that check terminfo
-  # for color depth to fall back to 256-color mode inside tmux.
-  tmux-256color-truecolor =
-    pkgs.runCommand "tmux-256color-truecolor"
-      {
-        nativeBuildInputs = [ pkgs.ncurses ];
-      }
-      ''
-        mkdir -p $out/share/terminfo
-
-        cat > tmux-256color.src << 'TERMINFO'
-        tmux-256color|tmux with 256 colors and truecolor,
-        	use=tmux-256color,
-        	Tc,
-        	setrgbb=\E[48;2;%p1%d;%p2%d;%p3%dm,
-        	setrgbf=\E[38;2;%p1%d;%p2%d;%p3%dm,
-        TERMINFO
-
-        tic -x -o $out/share/terminfo tmux-256color.src
-      '';
-
   tmux-center-focus = pkgs.writeShellApplication {
     name = "tmux-center-focus";
     runtimeInputs = [ pkgs.tmux ];
@@ -471,8 +448,8 @@ in
             }
           ];
           extraConfig = ''
-            set -as terminal-features "xterm-256color:RGB"
-            set -as terminal-features "xterm-ghostty:RGB:hyperlinks"
+            set -as terminal-features ",ghostty:RGB"
+            set -as terminal-features ",xterm-256color:RGB"
             set -g allow-passthrough on
             set -g focus-events on
             set -g set-clipboard on
@@ -487,11 +464,6 @@ in
             bind k select-pane -U
             bind l select-pane -R
           '';
-        };
-
-        home.file.".terminfo" = {
-          source = "${tmux-256color-truecolor}/share/terminfo";
-          recursive = true;
         };
 
         home.activation.tmuxSocketDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
