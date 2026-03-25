@@ -181,21 +181,7 @@ let
         type = "command";
         command = "bash ~/.claude/statusline-starship.sh";
       };
-      enabledPlugins = {
-        "claude-md-management@claude-plugins-official" = true;
-        "code-review@claude-plugins-official" = true;
-        "code-simplifier@claude-plugins-official" = true;
-        "commit-commands@claude-plugins-official" = true;
-        "feature-dev@claude-plugins-official" = true;
-        "gopls-lsp@claude-plugins-official" = true;
-        "hookify@claude-plugins-official" = false;
-        "plugin-dev@claude-plugins-official" = true;
-        "pr-review-toolkit@claude-plugins-official" = true;
-        "ralph-loop@claude-plugins-official" = true;
-        "security-guidance@claude-plugins-official" = true;
-        "typescript-lsp@claude-plugins-official" = true;
-      }
-      // cfg.extraEnabledPlugins;
+      enabledPlugins = { } // cfg.extraEnabledPlugins;
       env = {
         CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
       };
@@ -312,6 +298,9 @@ let
             ];
           }
         ];
+      }
+      // lib.optionalAttrs (cfg.extraStopHooks != [ ]) {
+        Stop = map mkHookEntry cfg.extraStopHooks;
       };
     }
     // cfg.extraSettings
@@ -375,6 +364,11 @@ in
       type = lib.types.listOf claudeHookEntryType;
       default = [ ];
       description = "Additional PostToolUse hooks";
+    };
+    extraStopHooks = lib.mkOption {
+      type = lib.types.listOf claudeHookEntryType;
+      default = [ ];
+      description = "Additional Stop hooks";
     };
     extraEnabledPlugins = lib.mkOption {
       type = lib.types.attrsOf lib.types.bool;

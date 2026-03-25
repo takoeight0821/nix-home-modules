@@ -4,6 +4,8 @@
   pluginRoot,
 }:
 let
+  deployBase = "~/.claude/plugin-files/${name}";
+
   skills = pkgs.runCommand "${name}-skills" { } ''
     mkdir -p $out
     src=${pluginRoot}
@@ -20,6 +22,7 @@ let
         ${pkgs.gnused}/bin/sed \
           -e 's/^tools: /allowed-tools: /' \
           -e '/^color: /d' \
+          -e 's|\''${CLAUDE_PLUGIN_ROOT}|${deployBase}|g' \
           "$f" > "$out/$fname/SKILL.md"
       done
     fi
@@ -31,6 +34,7 @@ let
         mkdir -p "$out/$fname"
         ${pkgs.gnused}/bin/sed \
           -e '/^argument-hint: /d' \
+          -e 's|\''${CLAUDE_PLUGIN_ROOT}|${deployBase}|g' \
           "$f" > "$out/$fname/SKILL.md"
       done
     fi
@@ -41,30 +45,41 @@ let
   hasHooks = builtins.pathExists hooksJsonPath;
   hooksJson = if hasHooks then builtins.fromJSON (builtins.readFile hooksJsonPath) else { };
 
-  replaceRoot =
-    str:
-    builtins.replaceStrings [ "\${CLAUDE_PLUGIN_ROOT}/hooks/" ] [ "bash ~/.claude/hooks/${name}/" ] str;
+  scriptsDir = pluginRoot + "/scripts";
+  hasScripts = builtins.pathExists scriptsDir;
+
+  replaceRoot = str: builtins.replaceStrings [ "\${CLAUDE_PLUGIN_ROOT}" ] [ deployBase ] str;
 
   transformHook =
     h: if h.type or "" == "command" then h // { command = replaceRoot h.command; } else h;
 
   transformEntry = entry: {
-    inherit (entry) matcher;
+    matcher = entry.matcher or "";
     hooks = map transformHook entry.hooks;
   };
 
   hookEntries = lib.mapAttrs (_event: entries: map transformEntry entries) (hooksJson.hooks or { });
 
-  scriptFiles =
+  hookScriptFiles =
     if hasHooks then lib.filterAttrs (n: _: n != "hooks.json") (builtins.readDir hooksDir) else { };
 
-  hookFiles = lib.mapAttrs' (filename: _: {
-    name = ".claude/hooks/${name}/${filename}";
-    value = {
-      source = hooksDir + "/${filename}";
-      executable = true;
-    };
-  }) scriptFiles;
+  scriptDirFiles = if hasScripts then builtins.readDir scriptsDir else { };
+
+  hookFiles =
+    (lib.mapAttrs' (filename: _: {
+      name = ".claude/plugin-files/${name}/hooks/${filename}";
+      value = {
+        source = hooksDir + "/${filename}";
+        executable = true;
+      };
+    }) hookScriptFiles)
+    // (lib.mapAttrs' (filename: _: {
+      name = ".claude/plugin-files/${name}/scripts/${filename}";
+      value = {
+        source = scriptsDir + "/${filename}";
+        executable = true;
+      };
+    }) scriptDirFiles);
 in
 {
   inherit skills hookFiles hookEntries;
