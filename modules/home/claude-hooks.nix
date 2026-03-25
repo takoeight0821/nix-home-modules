@@ -173,7 +173,6 @@ let
         deny = [
           "Read(.env*)"
           "Read(secrets/**)"
-          "Bash(git -C:*)"
         ]
         ++ cfg.extraDenyPermissions;
         ask = [ ];
