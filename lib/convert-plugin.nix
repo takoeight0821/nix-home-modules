@@ -18,12 +18,12 @@ let
       for f in $src/agents/*.md; do
         [ -f "$f" ] || continue
         fname=$(basename "$f" .md)
-        mkdir -p "$out/$fname"
+        mkdir -p "$out/${name}/$fname"
         ${pkgs.gnused}/bin/sed \
           -e 's/^tools: /allowed-tools: /' \
           -e '/^color: /d' \
           -e 's|\''${CLAUDE_PLUGIN_ROOT}|${deployBase}|g' \
-          "$f" > "$out/$fname/SKILL.md"
+          "$f" > "$out/${name}/$fname/SKILL.md"
       done
     fi
 
@@ -31,11 +31,11 @@ let
       for f in $src/commands/*.md; do
         [ -f "$f" ] || continue
         fname=$(basename "$f" .md)
-        mkdir -p "$out/$fname"
+        mkdir -p "$out/${name}/$fname"
         ${pkgs.gnused}/bin/sed \
           -e '/^argument-hint: /d' \
           -e 's|\''${CLAUDE_PLUGIN_ROOT}|${deployBase}|g' \
-          "$f" > "$out/$fname/SKILL.md"
+          "$f" > "$out/${name}/$fname/SKILL.md"
       done
     fi
   '';
