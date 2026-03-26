@@ -328,12 +328,10 @@ let
 
     ## GitHub Operations
 
-    - GitHub 操作には `gh` CLI を優先する。手動の git アプローチ（git remote add + git push など）より `gh pr create`、`gh pr merge` 等を使う。
-    - 認証には PAT を使う。GitHub Apps 認証は使わない。
-
-    ## GitHub CLI Usage
-
-    - 読み取り・書き込みともに `gh` を使用
+    - Prefer `gh` CLI for all GitHub operations over manual git approaches (e.g., use `gh pr create` / `gh pr merge` instead of `git remote add` + `git push`).
+    - Use `gh pr merge` directly to merge PRs. No need to manually check status before merging.
+    - Use `gh pr create` to create PRs from a branch.
+    - Use `gh` for both read and write operations.
 
     ## Go Development
 
