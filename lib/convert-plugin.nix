@@ -49,6 +49,10 @@ let
   scriptsDir = pluginRoot + "/scripts";
   hasScripts = builtins.pathExists scriptsDir;
 
+  promptsDir = pluginRoot + "/prompts";
+  hasPrompts = builtins.pathExists promptsDir;
+  promptDirFiles = if hasPrompts then builtins.readDir promptsDir else { };
+
   replaceRoot = str: builtins.replaceStrings [ "\${CLAUDE_PLUGIN_ROOT}" ] [ deployBaseHome ] str;
 
   transformHook =
@@ -80,7 +84,13 @@ let
         source = scriptsDir + "/${filename}";
         executable = true;
       };
-    }) scriptDirFiles);
+    }) scriptDirFiles)
+    // (lib.mapAttrs' (filename: _: {
+      name = ".claude/plugin-files/${name}/prompts/${filename}";
+      value = {
+        source = promptsDir + "/${filename}";
+      };
+    }) promptDirFiles);
 in
 {
   inherit skills hookFiles hookEntries;
