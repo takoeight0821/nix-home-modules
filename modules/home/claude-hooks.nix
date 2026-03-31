@@ -47,6 +47,23 @@ let
     hooks = map mkHookAction entry.hooks;
   };
 
+  reservedHookEvents = [
+    "PreToolUse"
+    "PostToolUse"
+    "Stop"
+    "Notification"
+  ];
+
+  validatedExtraHookEntries =
+    let
+      invalid = lib.filter (e: builtins.elem e reservedHookEvents) (
+        builtins.attrNames cfg.extraHookEntries
+      );
+    in
+    assert lib.assertMsg (invalid == [ ])
+      "extraHookEntries contains reserved event(s): ${builtins.concatStringsSep ", " invalid}. Use dedicated options instead.";
+    cfg.extraHookEntries;
+
   settingsJson = builtins.toJSON (
     {
       permissions = {
@@ -301,7 +318,8 @@ let
       }
       // lib.optionalAttrs (cfg.extraStopHooks != [ ]) {
         Stop = map mkHookEntry cfg.extraStopHooks;
-      };
+      }
+      // lib.mapAttrs (_event: entries: map mkHookEntry entries) validatedExtraHookEntries;
     }
     // cfg.extraSettings
   );
@@ -367,6 +385,11 @@ in
       type = lib.types.listOf claudeHookEntryType;
       default = [ ];
       description = "Additional Stop hooks";
+    };
+    extraHookEntries = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.listOf claudeHookEntryType);
+      default = { };
+      description = "Additional hook entries keyed by event name (e.g. SessionStart, SessionEnd). Reserved events (PreToolUse, PostToolUse, Stop, Notification) are not allowed — use dedicated options instead.";
     };
     extraEnabledPlugins = lib.mkOption {
       type = lib.types.attrsOf lib.types.bool;
