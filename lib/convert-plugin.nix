@@ -4,7 +4,8 @@
   pluginRoot,
 }:
 let
-  deployBase = "~/.claude/plugin-files/${name}";
+  deployBaseTilde = "~/.claude/plugin-files/${name}";
+  deployBaseHome = "\$HOME/.claude/plugin-files/${name}";
 
   skills = pkgs.runCommand "${name}-skills" { } ''
     mkdir -p $out
@@ -22,7 +23,7 @@ let
         ${pkgs.gnused}/bin/sed \
           -e 's/^tools: /allowed-tools: /' \
           -e '/^color: /d' \
-          -e 's|\''${CLAUDE_PLUGIN_ROOT}|${deployBase}|g' \
+          -e 's|\''${CLAUDE_PLUGIN_ROOT}|${deployBaseTilde}|g' \
           "$f" > "$out/${name}/$fname/SKILL.md"
       done
     fi
@@ -34,7 +35,7 @@ let
         mkdir -p "$out/${name}/$fname"
         ${pkgs.gnused}/bin/sed \
           -e '/^argument-hint: /d' \
-          -e 's|\''${CLAUDE_PLUGIN_ROOT}|${deployBase}|g' \
+          -e 's|\''${CLAUDE_PLUGIN_ROOT}|${deployBaseTilde}|g' \
           "$f" > "$out/${name}/$fname/SKILL.md"
       done
     fi
@@ -48,7 +49,7 @@ let
   scriptsDir = pluginRoot + "/scripts";
   hasScripts = builtins.pathExists scriptsDir;
 
-  replaceRoot = str: builtins.replaceStrings [ "\${CLAUDE_PLUGIN_ROOT}" ] [ deployBase ] str;
+  replaceRoot = str: builtins.replaceStrings [ "\${CLAUDE_PLUGIN_ROOT}" ] [ deployBaseHome ] str;
 
   transformHook =
     h: if h.type or "" == "command" then h // { command = replaceRoot h.command; } else h;
