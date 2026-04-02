@@ -30,43 +30,37 @@ in
         share = true;
       };
 
-      shellAliases =
-        {
-          ".." = "cd ..";
-          "..." = "cd ../..";
-          "...." = "cd ../../..";
+      shellAliases = {
+        ".." = "cd ..";
+        "..." = "cd ../..";
+        "...." = "cd ../../..";
 
-          ls = "ls --color=auto";
-          ll = "ls -la";
-          la = "ls -a";
-          l = "ls -CF";
+        ls = "ls --color=auto";
+        ll = "ls -la";
+        la = "ls -a";
+        l = "ls -CF";
 
-          g = "git";
-          gs = "git status";
-          gd = "git diff";
-          ga = "git add";
-          gc = "git commit";
-          gp = "git push";
-          gl = "git pull";
+        g = "git";
+        gs = "git status";
+        gd = "git diff";
+        ga = "git add";
+        gc = "git commit";
+        gp = "git push";
+        gl = "git pull";
 
-          wip = ''git commit --fixup $(git log -1 --pretty=format:"%H" --grep="^fixup\!" --invert-grep)'';
+        wip = ''git commit --fixup $(git log -1 --pretty=format:"%H" --grep="^fixup\!" --invert-grep)'';
 
-          cp = "cp -i";
-          mv = "mv -i";
+        npm = "echo 'Use pnpm instead of npm'; false";
+        npx = "echo 'Use pnpm dlx instead of npx'; false";
 
-          npm = "echo 'Use pnpm instead of npm'; false";
-          npx = "echo 'Use pnpm dlx instead of npx'; false";
+        grep = "grep --color=auto";
 
-          grep = "grep --color=auto";
-          df = "df -h";
-          du = "du -h";
-
-          hooklog = "less +F ~/.claude/hooks.log";
-        }
-        // lib.optionalAttrs (cfg.darwinRebuildFlakeRef != "") {
-          nrs = "darwin-rebuild switch --flake ${cfg.darwinRebuildFlakeRef}";
-          nrb = "darwin-rebuild build --flake ${cfg.darwinRebuildFlakeRef}";
-        };
+        hooklog = "less +F ~/.claude/hooks.log";
+      }
+      // lib.optionalAttrs (cfg.darwinRebuildFlakeRef != "") {
+        nrs = "darwin-rebuild switch --flake ${cfg.darwinRebuildFlakeRef}";
+        nrb = "darwin-rebuild build --flake ${cfg.darwinRebuildFlakeRef}";
+      };
 
       sessionVariables = {
         EDITOR = "nvim";
