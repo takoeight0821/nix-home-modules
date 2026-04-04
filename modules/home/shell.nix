@@ -68,6 +68,7 @@ in
         LANG = "en_US.UTF-8";
         LC_ALL = "en_US.UTF-8";
         TMUX_TMPDIR = "${config.home.homeDirectory}/.tmux/sockets";
+        CLAUDE_CODE_DISABLE_1M_CONTEXT = "1";
       };
 
       initContent = ''
