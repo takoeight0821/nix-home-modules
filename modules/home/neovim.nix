@@ -13,6 +13,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    home.packages = [ pkgs.tree-sitter ];
+
     programs.neovim = {
       enable = true;
       defaultEditor = true;
@@ -277,43 +279,25 @@ in
           -- treesitter for better syntax highlighting
           {
             "nvim-treesitter/nvim-treesitter",
+            branch = "main",
+            lazy = false,
             build = ":TSUpdate",
-            event = { "BufReadPost", "BufNewFile" },
-            opts = {
-              ensure_installed = {
-                "lua",
-                "vim",
-                "vimdoc",
-                "query",
-                "markdown",
-                "markdown_inline",
-                "bash",
-                "c",
-                "cpp",
-                "go",
-                "javascript",
-                "typescript",
-                "tsx",
-                "json",
-                "python",
-                "rust",
-                "yaml",
-                "toml",
-                "html",
-                "css",
-                "dockerfile",
-                "gitignore",
-                "make",
-                "regex",
-                "fsharp",
-                "nix",
-              },
-              auto_install = true,
-              highlight = { enable = true },
-              indent = { enable = true },
-            },
-            config = function(_, opts)
-              require("nvim-treesitter.configs").setup(opts)
+            config = function()
+              require("nvim-treesitter").setup {}
+              require("nvim-treesitter").install {
+                "lua", "vim", "vimdoc", "query",
+                "markdown", "markdown_inline",
+                "bash", "c", "cpp", "go",
+                "javascript", "typescript", "tsx", "json",
+                "python", "rust", "yaml", "toml",
+                "html", "css", "dockerfile", "gitignore",
+                "make", "regex", "fsharp", "nix",
+              }
+              vim.api.nvim_create_autocmd("FileType", {
+                callback = function()
+                  pcall(vim.treesitter.start)
+                end,
+              })
             end,
           },
 
