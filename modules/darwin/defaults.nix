@@ -54,33 +54,31 @@ in
         cleanup = "zap";
       };
       taps = [ ];
-      brews =
-        [
-          "aws-sam-cli"
-          "gemini-cli"
-        ]
-        ++ cfg.extraBrews;
-      casks =
-        [
-          "ghostty"
-          "visual-studio-code"
-          "orbstack"
+      brews = [
+        "aws-sam-cli"
+        "gemini-cli"
+      ]
+      ++ cfg.extraBrews;
+      casks = [
+        "ghostty"
+        "visual-studio-code"
+        "orbstack"
 
-          "claude"
-          "codex"
-          "antigravity"
+        "claude"
+        "codex"
+        "antigravity"
 
-          "iterm2"
+        "iterm2"
 
-          "raycast"
-          "microsoft-edge"
-          "karabiner-elements"
-          "logseq"
+        "raycast"
+        "microsoft-edge"
+        "karabiner-elements"
+        "logseq"
 
-          "font-hackgen"
-          "font-hackgen-nerd"
-        ]
-        ++ cfg.extraCasks;
+        "font-hackgen"
+        "font-hackgen-nerd"
+      ]
+      ++ cfg.extraCasks;
     };
   };
 }
