@@ -20,5 +20,6 @@ in
     ./codex.nix
     ./gemini.nix
     ./claude-hooks.nix
+    ./claude-plugins.nix
   ];
 }

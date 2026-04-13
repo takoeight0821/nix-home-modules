@@ -111,7 +111,7 @@ in
           version = "latest";
         };
 
-      extensions =
+      profiles.default.extensions =
         with pkgs.vscode-extensions;
         [
           github.copilot
