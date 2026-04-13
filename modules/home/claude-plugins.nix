@@ -142,6 +142,43 @@ let
 
   installedPluginsNixJson = builtins.toJSON nixInstalledEntries;
   knownMarketplacesNixJson = builtins.toJSON nixMarketplaceEntries;
+
+  # Copilot CLI helpers
+  copilotBaseDir = "${homeDir}/.copilot";
+  copilotInstalledPluginsDir = "${copilotBaseDir}/installed-plugins";
+
+  copilotCachePopulationScript = lib.concatStringsSep "\n" (
+    lib.mapAttrsToList (
+      name: pluginCfg:
+      let
+        src = getPluginSrc name pluginCfg;
+        target = "${copilotInstalledPluginsDir}/${pluginCfg.marketplace}/${name}";
+      in
+      ''
+        mkdir -p "$(dirname "${target}")"
+        rm -rf "${target}"
+        cp -rL "${src}" "${target}"
+        chmod -R u+w "${target}"
+      ''
+    ) enabledPlugins
+  );
+
+  copilotInstalledPluginsNixJson = builtins.toJSON (
+    lib.mapAttrsToList (
+      name: pluginCfg:
+      let
+        version = getPluginVersion name pluginCfg;
+        installPath = "${copilotInstalledPluginsDir}/${pluginCfg.marketplace}/${name}";
+      in
+      {
+        inherit name version;
+        marketplace = pluginCfg.marketplace;
+        installed_at = "1970-01-01T00:00:00.000Z";
+        enabled = true;
+        cache_path = installPath;
+      }
+    ) enabledPlugins
+  );
 in
 {
   options.takoeight0821.programs.claude-plugins = {
@@ -158,12 +195,17 @@ in
       default = { };
       description = "Claude Code plugins to install and enable";
     };
+
+    copilotCli = {
+      enable = lib.mkEnableOption "install plugins to GitHub Copilot CLI (~/.copilot)";
+    };
   };
 
   config = lib.mkIf cfg.enable {
     takoeight0821.programs.claude-hooks.extraEnabledPlugins = settingsEnabledPlugins;
 
-    home.activation = {
+    home.activation = lib.mkMerge [
+      {
       claudePluginsCache = lib.hm.dag.entryAfter [ "writeBoundary" ] cachePopulationScript;
 
       claudePluginsInstalled = lib.hm.dag.entryAfter [ "claudePluginsCache" ] ''
@@ -192,6 +234,27 @@ in
           "$mktFile" > "$mktFile.tmp"
         mv "$mktFile.tmp" "$mktFile"
       '';
-    };
+      }
+      (lib.mkIf cfg.copilotCli.enable {
+        copilotCliPluginsCache = lib.hm.dag.entryAfter [ "writeBoundary" ] copilotCachePopulationScript;
+
+        copilotCliPluginsConfig = lib.hm.dag.entryAfter [ "copilotCliPluginsCache" ] ''
+          configFile="${copilotBaseDir}/config.json"
+          mkdir -p "$(dirname "$configFile")"
+          if [ ! -f "$configFile" ]; then
+            echo '{}' > "$configFile"
+          fi
+          ${pkgs.jq}/bin/jq --argjson nix '${copilotInstalledPluginsNixJson}' '
+            .installed_plugins = (
+              [(.installed_plugins // [])[] | . as $e | select(
+                ($nix | map(select(.name == $e.name and .marketplace == $e.marketplace)) | length) == 0
+              )]
+              + $nix
+            )
+          ' "$configFile" > "$configFile.tmp"
+          mv "$configFile.tmp" "$configFile"
+        '';
+      })
+    ];
   };
 }
