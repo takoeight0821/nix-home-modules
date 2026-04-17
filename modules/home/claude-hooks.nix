@@ -213,34 +213,7 @@ let
             hooks = [
               {
                 type = "command";
-                command = "bash ~/.claude/hooks/log-wrapper.sh prefer-deno ~/.claude/hooks/prefer-deno.sh";
-              }
-            ];
-          }
-          {
-            matcher = "Bash";
-            hooks = [
-              {
-                type = "command";
                 command = "bash ~/.claude/hooks/log-wrapper.sh prefer-jq ~/.claude/hooks/prefer-jq.sh";
-              }
-            ];
-          }
-          {
-            matcher = "Bash";
-            hooks = [
-              {
-                type = "command";
-                command = "bash ~/.claude/hooks/log-wrapper.sh prefer-grep-tool ~/.claude/hooks/prefer-grep-tool.sh";
-              }
-            ];
-          }
-          {
-            matcher = "Bash";
-            hooks = [
-              {
-                type = "command";
-                command = "bash ~/.claude/hooks/log-wrapper.sh prefer-glob-tool ~/.claude/hooks/prefer-glob-tool.sh";
               }
             ];
           }
@@ -460,24 +433,9 @@ in
       text = builtins.readFile ./hooks/log-wrapper.sh;
     };
 
-    home.file.".claude/hooks/prefer-deno.sh" = {
-      executable = true;
-      text = builtins.readFile ./hooks/prefer-deno.sh;
-    };
-
     home.file.".claude/hooks/prefer-jq.sh" = {
       executable = true;
       text = builtins.readFile ./hooks/prefer-jq.sh;
-    };
-
-    home.file.".claude/hooks/prefer-grep-tool.sh" = {
-      executable = true;
-      text = builtins.readFile ./hooks/prefer-grep-tool.sh;
-    };
-
-    home.file.".claude/hooks/prefer-glob-tool.sh" = {
-      executable = true;
-      text = builtins.readFile ./hooks/prefer-glob-tool.sh;
     };
 
     home.file.".claude/hooks/block-dangerous-flags.sh" = {

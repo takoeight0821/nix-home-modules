@@ -206,34 +206,34 @@ in
 
     home.activation = lib.mkMerge [
       {
-      claudePluginsCache = lib.hm.dag.entryAfter [ "writeBoundary" ] cachePopulationScript;
+        claudePluginsCache = lib.hm.dag.entryAfter [ "writeBoundary" ] cachePopulationScript;
 
-      claudePluginsInstalled = lib.hm.dag.entryAfter [ "claudePluginsCache" ] ''
-        installedFile="${pluginsBaseDir}/installed_plugins.json"
-        mkdir -p "$(dirname "$installedFile")"
-        if [ ! -f "$installedFile" ]; then
-          echo '{"version":2,"plugins":{}}' > "$installedFile"
-        fi
-        ${pkgs.jq}/bin/jq --argjson nix '${installedPluginsNixJson}' \
-          '.plugins = (.plugins // {}) + $nix' \
-          "$installedFile" > "$installedFile.tmp"
-        mv "$installedFile.tmp" "$installedFile"
-      '';
+        claudePluginsInstalled = lib.hm.dag.entryAfter [ "claudePluginsCache" ] ''
+          installedFile="${pluginsBaseDir}/installed_plugins.json"
+          mkdir -p "$(dirname "$installedFile")"
+          if [ ! -f "$installedFile" ]; then
+            echo '{"version":2,"plugins":{}}' > "$installedFile"
+          fi
+          ${pkgs.jq}/bin/jq --argjson nix '${installedPluginsNixJson}' \
+            '.plugins = (.plugins // {}) + $nix' \
+            "$installedFile" > "$installedFile.tmp"
+          mv "$installedFile.tmp" "$installedFile"
+        '';
 
-      claudePluginsMarketplaces = lib.hm.dag.entryAfter [ "claudePluginsCache" ] ''
-        mktFile="${pluginsBaseDir}/known_marketplaces.json"
-        mkdir -p "$(dirname "$mktFile")"
-        if [ ! -f "$mktFile" ]; then
-          echo '{}' > "$mktFile"
-        fi
-        NOW=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
-        nixMkts=$(echo '${knownMarketplacesNixJson}' | ${pkgs.jq}/bin/jq --arg now "$NOW" '
-          with_entries(.value.lastUpdated = $now)
-        ')
-        ${pkgs.jq}/bin/jq --argjson nix "$nixMkts" '. + $nix' \
-          "$mktFile" > "$mktFile.tmp"
-        mv "$mktFile.tmp" "$mktFile"
-      '';
+        claudePluginsMarketplaces = lib.hm.dag.entryAfter [ "claudePluginsCache" ] ''
+          mktFile="${pluginsBaseDir}/known_marketplaces.json"
+          mkdir -p "$(dirname "$mktFile")"
+          if [ ! -f "$mktFile" ]; then
+            echo '{}' > "$mktFile"
+          fi
+          NOW=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
+          nixMkts=$(echo '${knownMarketplacesNixJson}' | ${pkgs.jq}/bin/jq --arg now "$NOW" '
+            with_entries(.value.lastUpdated = $now)
+          ')
+          ${pkgs.jq}/bin/jq --argjson nix "$nixMkts" '. + $nix' \
+            "$mktFile" > "$mktFile.tmp"
+          mv "$mktFile.tmp" "$mktFile"
+        '';
       }
       (lib.mkIf cfg.copilotCli.enable {
         copilotCliPluginsCache = lib.hm.dag.entryAfter [ "writeBoundary" ] copilotCachePopulationScript;
