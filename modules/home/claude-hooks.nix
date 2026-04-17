@@ -203,7 +203,7 @@ let
         CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
       };
       teammateMode = "tmux";
-      language = "日本語";
+      language = "English";
       cleanupPeriodDays = 365;
       autoUpdatesChannel = "latest";
       hooks = {
