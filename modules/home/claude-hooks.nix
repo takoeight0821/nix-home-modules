@@ -338,7 +338,6 @@ let
 
     ## Workflow Rules
 
-    - 計画（plan）を求められたら、計画ファイルを書いて停止する。明示的に実装を指示されるまで実装に入らない。
     - rebase やコンフリクト解決時は、結果を必ず検証する。「already up to date」と仮定しない。
 
     ## System Configuration
