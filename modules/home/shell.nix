@@ -97,6 +97,12 @@ in
         # Add local bin to PATH
         export PATH="$HOME/.local/bin:$PATH"
 
+        # Export COPILOT_GITHUB_TOKEN from a pre-decrypted file when not already set.
+        # Scoped to Copilot CLI only so GH_TOKEN / gh auth are untouched.
+        if [ -z "''${COPILOT_GITHUB_TOKEN-}" ] && [ -r "$HOME/.cache/gh-copilot/token" ]; then
+          export COPILOT_GITHUB_TOKEN="$(cat "$HOME/.cache/gh-copilot/token")"
+        fi
+
         # Initialize completions
         autoload -Uz compinit && compinit
 
