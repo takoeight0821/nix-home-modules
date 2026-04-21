@@ -298,50 +298,6 @@ let
     // cfg.extraSettings
   );
 
-  claudeMdContent = ''
-    # Global Claude Code Instructions
-
-    ## Do not add shell comments to Bash commands
-
-    When using the Bash tool, do not include shell comments (`#`).
-
-    - No comment lines (e.g. `# setup`)
-    - No inline comments (e.g. `ls -la # list files`)
-    - Use the `description` parameter for command explanations instead
-
-    ## Workflow Rules
-
-    - rebase やコンフリクト解決時は、結果を必ず検証する。「already up to date」と仮定しない。
-
-    ## System Configuration
-
-    - Nix/home-manager で管理されているファイル（~/.config 以下の生成ファイルなど）は直接編集せず、Nix 設定ファイル側を編集する。
-
-    ## GitHub Operations
-
-    - Prefer `gh` CLI for all GitHub operations over manual git approaches (e.g., use `gh pr create` / `gh pr merge` instead of `git remote add` + `git push`).
-    - Use `gh pr merge` directly to merge PRs. No need to manually check status before merging.
-    - Use `gh pr create` to create PRs from a branch.
-    - Use `gh` for both read and write operations.
-
-    ## Go Development
-
-    - Go コード変更後は lint 問題をすべて修正してからコミットする。
-    - lint 警告を「既存の問題」として無視しない。指摘されたら修正する。
-
-    ## Agent Teams
-
-    複雑なタスクや並列化可能な作業では、積極的に TeamCreate でチームを編成する。
-
-    - 複数ファイル・複数領域にまたがる実装は、領域ごとにチームメイトを割り当てて並列作業する。
-    - 調査・実装・テストなどフェーズが独立している場合もチーム編成を検討する。
-    - チームメイトには明確なタスクと担当範囲を割り当て、TaskCreate でタスクを管理する。
-    - 各チームメイトには必ず独自の worktree（`isolation: "worktree"`）を割り当て、コンフリクトなく並列作業できるようにする。
-    - チームメイトをシャットダウンする前に、各 worktree の変更をメインブランチにマージする。マージ後にコンフリクトがないか検証すること。
-    - 単一ファイルの小さな変更など、チーム編成のオーバーヘッドが利点を上回る場合は Agent ツールのサブエージェントを使う。
-    - チーム作業完了後は必ず TeamDelete でクリーンアップする。
-  ''
-  + cfg.claudeMdExtra;
 in
 {
   options.takoeight0821.programs.claude-hooks = {
@@ -386,11 +342,6 @@ in
       default = { };
       description = "Additional top-level settings to merge";
     };
-    claudeMdExtra = lib.mkOption {
-      type = lib.types.lines;
-      default = "";
-      description = "Extra content to append to ~/.claude/CLAUDE.md";
-    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -423,10 +374,6 @@ in
                   echo "$newContent" > "$baselineFile"
                 fi
       '';
-
-    home.file.".claude/CLAUDE.md" = {
-      text = claudeMdContent;
-    };
 
     home.file.".claude/hooks/log-wrapper.sh" = {
       executable = true;

@@ -58,7 +58,6 @@ Key options:
 - `extraPreToolUseHooks` / `extraPostToolUseHooks` — add custom hooks
 - `extraEnabledPlugins` — enable/disable Claude Code plugins
 - `extraSettings` — merge additional top-level settings
-- `claudeMdExtra` — append content to `~/.claude/CLAUDE.md`
 
 ### karabiner
 
