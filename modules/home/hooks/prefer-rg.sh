@@ -16,7 +16,7 @@ COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
 
 STRIPPED=$(echo "$COMMAND" | sed "s/'[^']*'//g" | sed 's/"[^"]*"//g')
 
-FILTERED=$(echo "$STRIPPED" | sed -E 's/\bgit[[:space:]]+grep\b//g')
+FILTERED=$(echo "$STRIPPED" | sed -E 's/\bgit\b[^|&;]*\bgrep\b/git/g')
 
 if echo "$FILTERED" | grep -qE '\bgrep\b'; then
   jq -n '{
