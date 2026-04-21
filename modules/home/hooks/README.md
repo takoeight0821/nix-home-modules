@@ -12,6 +12,7 @@ All hooks are Bash scripts that receive JSON via stdin and output JSON to stdout
 | `git-readonly-approve.sh` | PreToolUse | allow | Auto-approves read-only git commands (`status`, `diff`, `log`, etc.) |
 | `prefer-deno.sh` | PreToolUse | suggest | Suggests Deno when Python is used |
 | `prefer-jq.sh` | PreToolUse | rewrite | Rewrites `python -m json.tool` to `jq .` |
+| `prefer-rg.sh` | PreToolUse | deny | Denies `grep` (use `rg` or the Grep tool); allows `git grep`, `pgrep`, `egrep`, `fgrep`, `ripgrep` |
 | `gh-api-readonly.sh` | PreToolUse | deny | Requires `--method GET` on `gh api` calls |
 | `gh-pr-reply.sh` | Helper | — | PR review comment reply script (installed to `~/.local/bin/`) |
 | `post-git-push-watch.sh` | PostToolUse | watch | Monitors CI checks after `git push` / `gh pr create` |
@@ -56,6 +57,17 @@ When a Bash command contains `python` or `python3` (outside quoted strings), out
 Detects `python3? -m json.tool` patterns (outside quoted strings) and rewrites the command to use `jq .` instead.
 
 **Output:** `{ "tool_input": { "command": "<rewritten>" } }` or empty.
+
+### prefer-rg.sh
+
+Denies `grep` invocations to encourage using `rg` (ripgrep) or the Grep tool. Strips quoted strings and removes `git grep` before matching, so the following are allowed:
+
+- `rg` (ripgrep)
+- `git grep` (git's built-in grep, respects `.gitignore`)
+- `pgrep`, `egrep`, `fgrep`, `ripgrep`, `zgrep`
+- `grep` inside quoted strings (e.g. `echo "use grep"`)
+
+**Output:** `{ "hookSpecificOutput": { "permissionDecision": "deny", ... } }` or empty.
 
 ### gh-api-readonly.sh
 

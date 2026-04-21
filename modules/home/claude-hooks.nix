@@ -222,6 +222,15 @@ let
             hooks = [
               {
                 type = "command";
+                command = "bash ~/.claude/hooks/log-wrapper.sh prefer-rg ~/.claude/hooks/prefer-rg.sh";
+              }
+            ];
+          }
+          {
+            matcher = "Bash";
+            hooks = [
+              {
+                type = "command";
                 command = "bash ~/.claude/hooks/log-wrapper.sh block-dangerous-flags ~/.claude/hooks/block-dangerous-flags.sh";
               }
             ];
@@ -383,6 +392,11 @@ in
     home.file.".claude/hooks/prefer-jq.sh" = {
       executable = true;
       text = builtins.readFile ./hooks/prefer-jq.sh;
+    };
+
+    home.file.".claude/hooks/prefer-rg.sh" = {
+      executable = true;
+      text = builtins.readFile ./hooks/prefer-rg.sh;
     };
 
     home.file.".claude/hooks/block-dangerous-flags.sh" = {

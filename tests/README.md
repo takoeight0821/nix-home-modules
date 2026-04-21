@@ -16,6 +16,8 @@ All tests run in a sandboxed Nix build environment. They build a home-manager co
 |---|---|---|
 | `test-block-dangerous-flags` | `block-dangerous-flags.sh` | ~50 cases |
 | `test-git-readonly-approve` | `git-readonly-approve.sh` | ~50 cases |
+| `test-gh-api-readonly` | `gh-api-readonly.sh` | — |
+| `test-prefer-rg` | `prefer-rg.sh` | ~20 cases |
 
 ## How Tests Work
 
