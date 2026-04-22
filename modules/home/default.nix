@@ -21,6 +21,6 @@ in
     ./gemini.nix
     ./claude-hooks.nix
     ./claude-plugins.nix
-    ./disk-report.nix
+    ./ghq-cache-report.nix
   ];
 }
