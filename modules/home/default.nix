@@ -22,5 +22,6 @@ in
     ./claude-hooks.nix
     ./claude-plugins.nix
     ./ghq-cache-report.nix
+    ./ghq-cleanup.nix
   ];
 }
