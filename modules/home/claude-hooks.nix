@@ -204,7 +204,6 @@ let
       };
       teammateMode = "tmux";
       language = "English";
-      cleanupPeriodDays = 365;
       autoUpdatesChannel = "latest";
       hooks = {
         PreToolUse = [
