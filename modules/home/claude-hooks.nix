@@ -202,7 +202,7 @@ let
       env = {
         CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
       };
-      teammateMode = "tmux";
+      teammateMode = "auto";
       language = "Japanese";
       enableVoice = true;
       autoUpdatesChannel = "latest";
