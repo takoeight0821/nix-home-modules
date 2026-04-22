@@ -204,7 +204,7 @@ let
       };
       teammateMode = "auto";
       language = "Japanese";
-      enableVoice = true;
+      voiceEnabled = true;
       autoUpdatesChannel = "latest";
       hooks = {
         PreToolUse = [
