@@ -203,7 +203,8 @@ let
         CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
       };
       teammateMode = "tmux";
-      language = "English";
+      language = "Japanese";
+      enableVoice = true;
       autoUpdatesChannel = "latest";
       hooks = {
         PreToolUse = [
