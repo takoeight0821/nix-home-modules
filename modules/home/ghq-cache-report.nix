@@ -34,6 +34,7 @@ let
         .venv, venv, __pycache__,
         .gradle, .next, .nuxt, .turbo, .parcel-cache,
         vendor, _build, .stack-work, .mix,
+        .terraform, .terragrunt-cache,
         coverage, .cache, result
       EOF
       }
@@ -77,6 +78,7 @@ let
         .venv venv __pycache__
         .gradle .next .nuxt .turbo .parcel-cache
         vendor _build .stack-work .mix
+        .terraform .terragrunt-cache
         coverage .cache result
       )
 
