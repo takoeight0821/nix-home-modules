@@ -34,6 +34,10 @@ let
       "editor.formatOnSave" = false;
     };
 
+    "[json]" = {
+      "editor.defaultFormatter" = "vscode.json-language-features";
+    };
+
     "markdown.marp.themes" = [
       "https://cunhapaulo.github.io/style/socrates.css"
     ];
@@ -69,6 +73,10 @@ let
       "https://www.npmjs.com" = true;
     };
     "chat.viewSessions.orientation" = "stacked";
+    "chat.useClaudeHooks" = true;
+    "chat.tools.terminal.autoApprove" = builtins.fromJSON (
+      builtins.readFile ./chat-terminal-autoapprove.json
+    );
 
     "accessibility.voice.speechLanguage" = "ja-JP";
 
