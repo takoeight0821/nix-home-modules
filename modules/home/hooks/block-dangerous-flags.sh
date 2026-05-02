@@ -49,8 +49,7 @@ if echo "$STRIPPED" | grep -qE '(^|\s|&&|\|\||;)fd\b' && \
   deny "fd with --exec/--exec-batch is not allowed. Use fd for listing only."
 fi
 
-if echo "$STRIPPED" | grep -qE '(^|\s|&&|\|\||;)sort\b' && \
-   echo "$STRIPPED" | grep -qE '\s(-o|--output)\b'; then
+if echo "$STRIPPED" | grep -qE '(^|\s|&&|\|\||;)sort\b[^|;&]*\s(-o\b|--output\b)'; then
   deny "sort -o (output to file) is not allowed. Use sort to output to stdout."
 fi
 

@@ -86,6 +86,8 @@ assert_allowed 'git commit -m "fixed find -delete issue"' "double-quoted: find -
 assert_allowed 'echo "use sed -i for in-place"' "double-quoted: sed -i in echo"
 assert_allowed "git commit -m 'sort -o is dangerous'" "single-quoted: sort -o in commit message"
 assert_allowed "echo 'fd --exec example'" "single-quoted: fd --exec in echo"
+assert_allowed 'sort file | grep -o pattern' "false positive: sort then grep -o in pipeline"
+assert_allowed 'sort -n | rg -o pat' "false positive: sort then rg -o in pipeline"
 
 echo ""
 echo "=== Nix Destructive Commands (should be blocked) ==="
