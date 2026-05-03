@@ -19,6 +19,7 @@ in
     ./karabiner.nix
     ./codex.nix
     ./gemini.nix
+    ./gemini-policies.nix
     ./claude-hooks.nix
     ./claude-plugins.nix
     ./ghq-cache-report.nix
