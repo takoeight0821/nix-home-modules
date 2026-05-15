@@ -179,6 +179,12 @@ let
       }
     ) enabledPlugins
   );
+
+  # Marketplaces declared in nix-config. In declarative Copilot CLI mode this
+  # set is the source of truth: any marketplace directory under
+  # ~/.copilot/installed-plugins/ that is not in this list is removed, and
+  # plugins within nix-managed marketplaces must be declared in `plugins`.
+  nixManagedMarketplacesJson = builtins.toJSON (builtins.attrNames cfg.marketplaces);
 in
 {
   options.takoeight0821.programs.claude-plugins = {
@@ -198,6 +204,13 @@ in
 
     copilotCli = {
       enable = lib.mkEnableOption "install plugins to GitHub Copilot CLI (~/.copilot)";
+      declarative = lib.mkEnableOption ''
+        strict declarative management of GitHub Copilot CLI plugins. When enabled,
+        the contents of `~/.copilot/installed-plugins/` and the `installed_plugins`
+        array in `~/.copilot/config.json` are kept in exact sync with `plugins`:
+        any plugin not declared in nix-config is removed, including plugins from
+        marketplaces unknown to nix-config
+      '';
     };
   };
 
@@ -238,22 +251,72 @@ in
       (lib.mkIf cfg.copilotCli.enable {
         copilotCliPluginsCache = lib.hm.dag.entryAfter [ "writeBoundary" ] copilotCachePopulationScript;
 
-        copilotCliPluginsConfig = lib.hm.dag.entryAfter [ "copilotCliPluginsCache" ] ''
-          configFile="${copilotBaseDir}/config.json"
-          mkdir -p "$(dirname "$configFile")"
-          if [ ! -f "$configFile" ]; then
-            echo '{}' > "$configFile"
-          fi
-          ${pkgs.jq}/bin/jq --argjson nix '${copilotInstalledPluginsNixJson}' '
-            .installed_plugins = (
-              [(.installed_plugins // [])[] | . as $e | select(
-                ($nix | map(select(.name == $e.name and .marketplace == $e.marketplace)) | length) == 0
-              )]
-              + $nix
-            )
-          ' "$configFile" > "$configFile.tmp"
-          mv "$configFile.tmp" "$configFile"
-        '';
+        copilotCliPluginsPrune = lib.mkIf cfg.copilotCli.declarative (
+          lib.hm.dag.entryAfter [ "copilotCliPluginsCache" ] ''
+            installedDir="${copilotInstalledPluginsDir}"
+            [ -d "$installedDir" ] || exit 0
+            nixMkts='${nixManagedMarketplacesJson}'
+
+            # Remove marketplace directories not declared in nix-config.
+            for mktDir in "$installedDir"/*; do
+              [ -d "$mktDir" ] || continue
+              mkt=$(basename "$mktDir")
+              if ! echo "$nixMkts" | ${pkgs.jq}/bin/jq -e --arg mkt "$mkt" 'index($mkt)' >/dev/null; then
+                rm -rf "$mktDir"
+              fi
+            done
+
+            # Within nix-managed marketplaces, remove plugins not declared in nix-config.
+            for mkt in $(echo "$nixMkts" | ${pkgs.jq}/bin/jq -r '.[]'); do
+              mktDir="$installedDir/$mkt"
+              [ -d "$mktDir" ] || continue
+              keep=$(echo '${copilotInstalledPluginsNixJson}' \
+                | ${pkgs.jq}/bin/jq -r --arg mkt "$mkt" \
+                  '.[] | select(.marketplace == $mkt) | .name')
+              for d in "$mktDir"/*; do
+                [ -d "$d" ] || continue
+                name=$(basename "$d")
+                if ! printf '%s\n' "$keep" | grep -qx -- "$name"; then
+                  rm -rf "$d"
+                fi
+              done
+            done
+          ''
+        );
+
+        copilotCliPluginsConfig =
+          lib.hm.dag.entryAfter
+            [
+              "copilotCliPluginsCache"
+              "copilotCliPluginsPrune"
+            ]
+            (
+              let
+                mergeFilter = ''
+                  .installed_plugins = (
+                    [(.installed_plugins // [])[] | . as $e | select(
+                      ($nix | map(select(.name == $e.name and .marketplace == $e.marketplace)) | length) == 0
+                    )]
+                    + $nix
+                  )
+                '';
+                declarativeFilter = ''
+                  .installed_plugins = $nix
+                '';
+                jqArgs = "--argjson nix '${copilotInstalledPluginsNixJson}'";
+                jqFilter = if cfg.copilotCli.declarative then declarativeFilter else mergeFilter;
+              in
+              ''
+                configFile="${copilotBaseDir}/config.json"
+                mkdir -p "$(dirname "$configFile")"
+                if [ ! -f "$configFile" ]; then
+                  echo '{}' > "$configFile"
+                fi
+                ${pkgs.jq}/bin/jq ${jqArgs} '${jqFilter}' \
+                  "$configFile" > "$configFile.tmp"
+                mv "$configFile.tmp" "$configFile"
+              ''
+            );
       })
     ];
   };
