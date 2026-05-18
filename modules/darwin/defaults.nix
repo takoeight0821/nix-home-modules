@@ -66,6 +66,7 @@ in
 
         "claude"
         "codex"
+        "copilot-cli"
         "antigravity"
 
         "iterm2"
