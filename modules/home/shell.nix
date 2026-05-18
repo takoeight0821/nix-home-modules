@@ -80,10 +80,6 @@ in
         bindkey -M viins '^G' send-break
         bindkey -M viins '^K' kill-line
 
-        # Enable command correction
-        setopt CORRECT
-        setopt CORRECT_ALL
-
         # Better completion
         setopt AUTO_MENU
         setopt COMPLETE_IN_WORD
