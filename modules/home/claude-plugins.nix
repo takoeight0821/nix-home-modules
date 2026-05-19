@@ -312,8 +312,8 @@ in
                 if [ ! -f "$configFile" ]; then
                   echo '{}' > "$configFile"
                 fi
-                ${pkgs.jq}/bin/jq ${jqArgs} '${jqFilter}' \
-                  "$configFile" > "$configFile.tmp"
+                sed '/^[[:space:]]*\/\//d' "$configFile" \
+                  | ${pkgs.jq}/bin/jq ${jqArgs} '${jqFilter}' > "$configFile.tmp"
                 mv "$configFile.tmp" "$configFile"
               ''
             );
