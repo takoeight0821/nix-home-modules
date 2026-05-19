@@ -137,6 +137,26 @@
                 bash ${./tests/test-gh-api-readonly.sh} --script "$HOOK_SCRIPT"
                 touch $out
               '';
+
+          test-block-package-install =
+            pkgs.runCommand "test-block-package-install"
+              {
+                nativeBuildInputs = [
+                  pkgs.bash
+                  pkgs.jq
+                  pkgs.gnugrep
+                  pkgs.gnused
+                ];
+              }
+              ''
+                HOOK_SCRIPT=$(mktemp)
+                cat > "$HOOK_SCRIPT" <<'HOOKEOF'
+                ${testHome.file.".claude/hooks/block-package-install.sh".text}
+                HOOKEOF
+                chmod +x "$HOOK_SCRIPT"
+                bash ${./tests/test-block-package-install.sh} --script "$HOOK_SCRIPT"
+                touch $out
+              '';
         }
       );
     };

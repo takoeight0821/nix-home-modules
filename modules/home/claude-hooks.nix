@@ -235,6 +235,15 @@ let
               }
             ];
           }
+          {
+            matcher = "Bash";
+            hooks = [
+              {
+                type = "command";
+                command = "bash ~/.claude/hooks/log-wrapper.sh block-package-install ~/.claude/hooks/block-package-install.sh";
+              }
+            ];
+          }
 
           {
             matcher = "Bash";
@@ -402,6 +411,11 @@ in
     home.file.".claude/hooks/block-dangerous-flags.sh" = {
       executable = true;
       text = builtins.readFile ./hooks/block-dangerous-flags.sh;
+    };
+
+    home.file.".claude/hooks/block-package-install.sh" = {
+      executable = true;
+      text = builtins.readFile ./hooks/block-package-install.sh;
     };
 
     home.file.".claude/hooks/gh-api-readonly.sh" = {
