@@ -20,17 +20,7 @@ let
     "github.copilot.chat.agent.autoApprove" = true;
     "github.copilot.chat.copilotMemory.enabled" = true;
 
-    "nix.enableLanguageServer" = true;
-    "nix.serverPath" = "nil";
-    "[nix]" = {
-      "editor.formatOnSave" = false;
-    };
-
-    "go.useLanguageServer" = true;
-    "go.toolsManagement.autoUpdate" = true;
-
     "[markdown]" = {
-      "editor.defaultFormatter" = "esbenp.prettier-vscode";
       "editor.formatOnSave" = false;
     };
 
@@ -38,15 +28,9 @@ let
       "editor.defaultFormatter" = "vscode.json-language-features";
     };
 
-    "markdown.marp.themes" = [
-      "https://cunhapaulo.github.io/style/socrates.css"
-    ];
-
     "git.autofetch" = true;
     "git.confirmSync" = false;
     "githubPullRequests.pullBranch" = "never";
-
-    "vim.useSystemClipboard" = true;
 
     "claudeCode.preferredLocation" = "panel";
     "claudeCode.useTerminal" = true;
@@ -125,25 +109,10 @@ in
           github.copilot
           github.copilot-chat
 
-          vscodevim.vim
-          editorconfig.editorconfig
-
-          jnoortheen.nix-ide
-          mkhl.direnv
-
-          golang.go
-
-          hashicorp.terraform
-          hashicorp.hcl
           ms-azuretools.vscode-docker
 
-          esbenp.prettier-vscode
-
-          redhat.vscode-yaml
           github.vscode-github-actions
           github.vscode-pull-request-github
-
-          marp-team.marp-vscode
         ]
         ++ (with pkgs.vscode-utils; [
           (extensionFromVscodeMarketplace {
