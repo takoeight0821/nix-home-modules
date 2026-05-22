@@ -111,8 +111,10 @@ in
         ]
         ++ (with pkgs.vscode-utils; [
           (buildVscodeExtension {
-            name = "local-toml-syntax";
+            pname = "toml-syntax";
+            version = "1.0.0";
             src = ./extensions/toml-syntax;
+            sourceRoot = ".";
             vscodeExtPublisher = "local";
             vscodeExtName = "toml-syntax";
             vscodeExtVersion = "1.0.0";
