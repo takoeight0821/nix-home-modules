@@ -81,11 +81,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.file.".vscode/extensions/local.toml-syntax-1.0.0" = {
-      source = ./extensions/toml-syntax;
-      recursive = true;
-    };
-
     home.activation.vscodeSettings = nhm-lib.mkMutableConfig {
       name = "vscode";
       configContent = settingsJson;
@@ -115,6 +110,13 @@ in
           github.vscode-pull-request-github
         ]
         ++ (with pkgs.vscode-utils; [
+          (buildVscodeExtension {
+            name = "local-toml-syntax";
+            src = ./extensions/toml-syntax;
+            vscodeExtPublisher = "local";
+            vscodeExtName = "toml-syntax";
+            vscodeExtVersion = "1.0.0";
+          })
           (extensionFromVscodeMarketplace {
             name = "vscode-speech";
             publisher = "ms-vscode";
