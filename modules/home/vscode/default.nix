@@ -116,6 +116,7 @@ in
             vscodeExtPublisher = "local";
             vscodeExtName = "toml-syntax";
             vscodeExtVersion = "1.0.0";
+            vscodeExtUniqueId = "local.toml-syntax";
           })
           (extensionFromVscodeMarketplace {
             name = "vscode-speech";
