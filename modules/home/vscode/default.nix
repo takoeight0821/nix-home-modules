@@ -95,7 +95,7 @@ in
         '')
         // {
           pname = "vscode";
-          version = "latest";
+          version = "1.121.0";
         };
 
       profiles.default.extensions =
