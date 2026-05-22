@@ -95,7 +95,11 @@ in
         '')
         // {
           pname = "vscode";
-          version = "1.121.0";
+          # Sentinel version that always passes home-manager's `versionAtLeast`
+          # checks (e.g. the >= 1.74.0 gate that controls extensions.json
+          # generation). The real VS Code is installed via Homebrew and updates
+          # on its own, so we can't track its version from Nix.
+          version = "9999.0.0";
         };
 
       profiles.default.extensions =
