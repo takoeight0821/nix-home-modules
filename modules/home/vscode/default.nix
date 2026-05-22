@@ -121,9 +121,21 @@ in
             version = "0.16.0";
             sha256 = "sha256-JhZWNlGXljsjmT3/xDi9Z7I4a2vsi/9EkWYbnlteE98=";
           })
+          (extensionFromVscodeMarketplace {
+            name = "vscode-chat-customizations-evaluations";
+            publisher = "ms-vscode";
+            version = "1.0.3";
+            sha256 = "sha256-6m/2+HVEO3lvDbZAS7pcLTcNCBe95PCZGO6Rs/vO54o=";
+          })
+          (extensionFromVscodeMarketplace {
+            name = "vscode-speech-language-pack-ja-jp";
+            publisher = "ms-vscode";
+            version = "0.5.0";
+            sha256 = "sha256-gbesiqyKWPlEPDyAmTgDSbMN9rWRkq1Trsih0gLgPr0=";
+          })
         ]);
 
-      mutableExtensionsDir = true;
+      mutableExtensionsDir = false;
     };
   };
 }
