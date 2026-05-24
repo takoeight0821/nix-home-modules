@@ -109,6 +109,7 @@ in
           github.copilot-chat
 
           ms-azuretools.vscode-docker
+          ms-vscode-remote.remote-containers
 
           github.vscode-github-actions
           github.vscode-pull-request-github
@@ -118,7 +119,7 @@ in
             pname = "toml-syntax";
             version = "1.0.0";
             src = ./extensions/toml-syntax;
-            sourceRoot = ".";
+            sourceRoot = "toml-syntax";
             vscodeExtPublisher = "local";
             vscodeExtName = "toml-syntax";
             vscodeExtVersion = "1.0.0";

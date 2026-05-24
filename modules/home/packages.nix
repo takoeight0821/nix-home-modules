@@ -47,7 +47,6 @@ in
         azure-cli
 
         # File management
-        trash-cli
       ]
       ++ cfg.extraPackages;
   };

@@ -155,6 +155,15 @@ in
         zle -N fzf-code
         bindkey -M viins '^f' fzf-code
 
+        # Move files to macOS Trash via Finder
+        trash() {
+          for f in "$@"; do
+            local abs
+            abs="$(realpath "$f")"
+            osascript -e "tell app \"Finder\" to delete POSIX file \"$abs\""
+          done
+        }
+
         # VS Code settings diff check
         vscode-settings-diff() {
           local settings="$HOME/Library/Application Support/Code/User/settings.json"
