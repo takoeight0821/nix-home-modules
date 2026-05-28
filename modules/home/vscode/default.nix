@@ -113,6 +113,8 @@ in
 
           github.vscode-github-actions
           github.vscode-pull-request-github
+
+          golang.go
         ]
         ++ (with pkgs.vscode-utils; [
           (buildVscodeExtension {
