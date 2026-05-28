@@ -76,7 +76,19 @@ let
     "search.followSymlinks" = false;
   };
 
-  settingsJson = builtins.toJSON vscodeSettings;
+  settingsJson = lib.removeSuffix "\n" (
+    builtins.readFile (
+      pkgs.runCommandLocal "vscode-settings.json"
+        {
+          nativeBuildInputs = [ pkgs.jq ];
+          passAsFile = [ "raw" ];
+          raw = builtins.toJSON vscodeSettings;
+        }
+        ''
+          ${pkgs.jq}/bin/jq --indent 4 . "$rawPath" > "$out"
+        ''
+    )
+  );
 in
 {
   options.takoeight0821.programs.vscode = {
