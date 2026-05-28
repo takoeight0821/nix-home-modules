@@ -30,7 +30,10 @@ let
 
     "git.autofetch" = true;
     "git.confirmSync" = false;
+    "git.replaceTagsWhenPull" = true;
     "githubPullRequests.pullBranch" = "never";
+
+    "workbench.editor.useModal" = "some";
 
     "claudeCode.preferredLocation" = "panel";
     "claudeCode.useTerminal" = true;
