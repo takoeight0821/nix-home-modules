@@ -19,7 +19,7 @@ lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [ -f "$configFile" ] && [ -f "$baselineFile" ]; then
       if ! ${pkgs.diffutils}/bin/diff -q "$baselineFile" "$configFile" > /dev/null 2>&1; then
         echo "WARNING [${name}]: runtime changes will be overwritten by updated Nix config:"
-        ${pkgs.diffutils}/bin/diff -u "$baselineFile" "$configFile" || true
+        ${pkgs.diffutils}/bin/diff -u "$configFile" "$baselineFile" || true
       fi
     fi
     echo '${configContent}' > "$configFile"
