@@ -40,6 +40,11 @@ Run `nix flake check` before every commit.
 - Strip quoted strings before pattern matching to prevent false positives
 - Use word boundaries in regex for command detection
 
+## Claude Code Plugin Management
+
+- `modules/home/claude-plugins.nix` — declarative Claude Code plugin management (`takoeight0821.programs.claude-plugins`). Populates `~/.claude/plugins/` from flake-input marketplace sources and optionally syncs GitHub Copilot CLI (`~/.copilot`); `copilotCli.declarative` prunes anything not declared in Nix.
+- `lib/convert-plugin.nix` (`nhm-lib.convertPlugin`) — converts a plugin's `agents/` and `commands/` into skills and deploys its `hooks/`/`scripts/`/`prompts/`, rewriting `${CLAUDE_PLUGIN_ROOT}` to a deployed path.
+
 ## Commands
 
 ```bash
