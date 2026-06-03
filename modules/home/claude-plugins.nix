@@ -336,13 +336,14 @@ in
             ]
             (
               let
+                nixJsonFile = pkgs.writeText "copilot-mcp-servers-nix.json" copilotMcpServersNixJson;
                 mergeFilter = ''
-                  (if has("mcpServers") then . else { mcpServers: . } end) + $nix
+                  . + $nix
                 '';
                 declarativeFilter = ''
                   $nix
                 '';
-                jqArgs = "--argjson nix '${copilotMcpServersNixJson}'";
+                jqArgs = ''--argjson nix "$(cat ${nixJsonFile})"'';
                 jqFilter = if cfg.copilotCli.declarative then declarativeFilter else mergeFilter;
               in
               ''
