@@ -179,6 +179,9 @@ let
       }
     ) enabledPlugins
   );
+  copilotMcpServersNixJson = builtins.toJSON {
+    mcpServers = cfg.copilotCli.mcpServers;
+  };
 
   # Marketplaces declared in nix-config. In declarative Copilot CLI mode this
   # set is the source of truth: any marketplace directory under
@@ -211,6 +214,14 @@ in
         any plugin not declared in nix-config is removed, including plugins from
         marketplaces unknown to nix-config
       '';
+      mcpServers = lib.mkOption {
+        type = lib.types.attrsOf lib.types.attrs;
+        default = { };
+        description = ''
+          MCP server definitions for GitHub Copilot CLI. These are written to
+          `~/.copilot/mcp-config.json`.
+        '';
+      };
     };
   };
 
@@ -315,6 +326,34 @@ in
                 sed '/^[[:space:]]*\/\//d' "$configFile" \
                   | ${pkgs.jq}/bin/jq ${jqArgs} '${jqFilter}' > "$configFile.tmp"
                 mv "$configFile.tmp" "$configFile"
+              ''
+            );
+
+        copilotCliMcpConfig =
+          lib.hm.dag.entryAfter
+            [
+              "copilotCliPluginsConfig"
+            ]
+            (
+              let
+                mergeFilter = ''
+                  (if has("mcpServers") then . else { mcpServers: . } end) + $nix
+                '';
+                declarativeFilter = ''
+                  $nix
+                '';
+                jqArgs = "--argjson nix '${copilotMcpServersNixJson}'";
+                jqFilter = if cfg.copilotCli.declarative then declarativeFilter else mergeFilter;
+              in
+              ''
+                mcpConfigFile="${copilotBaseDir}/mcp-config.json"
+                mkdir -p "$(dirname "$mcpConfigFile")"
+                if [ ! -f "$mcpConfigFile" ]; then
+                  echo '{}' > "$mcpConfigFile"
+                fi
+                sed '/^[[:space:]]*\/\//d' "$mcpConfigFile" \
+                  | ${pkgs.jq}/bin/jq ${jqArgs} '${jqFilter}' > "$mcpConfigFile.tmp"
+                mv "$mcpConfigFile.tmp" "$mcpConfigFile"
               ''
             );
       })
