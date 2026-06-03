@@ -20,6 +20,7 @@ in
     ./codex.nix
     ./gemini.nix
     ./gemini-policies.nix
+    ./opencode.nix
     ./claude-hooks.nix
     ./claude-plugins.nix
     ./ghq-cache-report.nix
