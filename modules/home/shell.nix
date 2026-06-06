@@ -93,6 +93,11 @@ in
         # Add local bin to PATH
         export PATH="$HOME/.local/bin:$PATH"
 
+        # Homebrew (Apple Silicon)
+        if [[ -f /opt/homebrew/bin/brew ]]; then
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+        fi
+
         # Export COPILOT_GITHUB_TOKEN from a pre-decrypted file when not already set.
         # Scoped to Copilot CLI only so GH_TOKEN / gh auth are untouched.
         if [ -z "''${COPILOT_GITHUB_TOKEN-}" ] && [ -r "$HOME/.cache/gh-copilot/token" ]; then
