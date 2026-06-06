@@ -52,6 +52,7 @@ in
       onActivation = {
         autoUpdate = true;
         cleanup = "zap";
+        extraFlags = [ "--force" ];
       };
       taps = [ ];
       brews = [
