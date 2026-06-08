@@ -201,6 +201,7 @@ let
       enabledPlugins = { } // cfg.extraEnabledPlugins;
       env = {
         CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
+        CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR = "1";
       };
       teammateMode = "auto";
       language = "Japanese";
