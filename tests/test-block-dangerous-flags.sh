@@ -57,8 +57,6 @@ assert_allowed() {
 
 echo "=== True Positives (should be blocked) ==="
 
-assert_denied 'sed -i s/foo/bar/ file.txt' "sed -i (short flag)"
-assert_denied 'sed --in-place s/foo/bar/ file.txt' "sed --in-place (long flag)"
 assert_denied 'find . -delete' "find -delete"
 assert_denied 'find . -exec rm {} \;' "find -exec"
 assert_denied 'find . -execdir cmd {} \;' "find -execdir"
@@ -73,7 +71,6 @@ assert_denied 'echo foo && find . -delete' "chained: echo && find -delete"
 echo ""
 echo "=== True Negatives (should be allowed) ==="
 
-assert_allowed 'sed s/foo/bar/ file.txt' "sed without -i"
 assert_allowed 'find . -name "*.txt"' "find with safe flags"
 assert_allowed 'fd pattern' "fd without exec"
 assert_allowed 'sort input.txt' "sort without -o"
@@ -83,7 +80,6 @@ echo ""
 echo "=== False Positive Prevention (quoted strings) ==="
 
 assert_allowed 'git commit -m "fixed find -delete issue"' "double-quoted: find -delete in commit message"
-assert_allowed 'echo "use sed -i for in-place"' "double-quoted: sed -i in echo"
 assert_allowed "git commit -m 'sort -o is dangerous'" "single-quoted: sort -o in commit message"
 assert_allowed "echo 'fd --exec example'" "single-quoted: fd --exec in echo"
 assert_allowed 'sort file | grep -o pattern' "false positive: sort then grep -o in pipeline"

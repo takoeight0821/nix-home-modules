@@ -3,7 +3,6 @@
 #
 # Blocks dangerous command flags that could cause unintended data loss or side effects.
 # Denied patterns:
-#   - sed -i / --in-place (in-place file editing)
 #   - find with -delete/-exec/-execdir/-ok/-okdir/-fls/-fprint (side effects)
 #   - fd with --exec/--exec-batch (side effects)
 #   - sort -o / --output (overwrite file)
@@ -33,11 +32,6 @@ deny() {
   }'
   exit 0
 }
-
-if echo "$STRIPPED" | grep -qE '(^|\s|&&|\|\||;)sed\b' && \
-   echo "$STRIPPED" | grep -qE '[[:space:]]-[^[:space:]]*i|[[:space:]]--in-place\b'; then
-  deny "sed -i (in-place edit) is not allowed. Use sed without -i to output to stdout."
-fi
 
 if echo "$STRIPPED" | grep -qE '(^|\s|&&|\|\||;)find\b' && \
    echo "$STRIPPED" | grep -qE '\s-(delete|exec|execdir|ok|okdir|fls|fprint0?|fprintf)\b'; then
