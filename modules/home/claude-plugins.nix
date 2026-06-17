@@ -166,12 +166,19 @@ let
         src = getPluginSrc name pluginCfg;
         target = "${copilotInstalledPluginsDir}/${pluginCfg.marketplace}/${name}";
       in
-      ''
-        mkdir -p "$(dirname "${target}")"
-        rm -rf "${target}"
-        cp -rL "${src}" "${target}"
-        chmod -R u+w "${target}"
-      ''
+      (
+        ''
+          mkdir -p "$(dirname "${target}")"
+          rm -rf "${target}"
+          cp -rL "${src}" "${target}"
+          chmod -R u+w "${target}"
+        ''
+        + lib.optionalString (pluginCfg.excludeAgents != [ ]) (
+          lib.concatMapStringsSep "\n" (agent: ''
+            rm -f "${target}/agents/${agent}.md"
+          '') pluginCfg.excludeAgents
+        )
+      )
     ) enabledPlugins
   );
 
@@ -234,6 +241,15 @@ in
           `~/.copilot/mcp-config.json`.
         '';
       };
+      excludeSkills = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = ''
+          Skill directory names to remove from ~/.copilot/skills/.
+          Use this to drop built-in skills synced by Copilot CLI
+          (e.g. from anthropic-agent-skills) that are not needed in Copilot context.
+        '';
+      };
     };
   };
 
@@ -273,6 +289,14 @@ in
       }
       (lib.mkIf cfg.copilotCli.enable {
         copilotCliPluginsCache = lib.hm.dag.entryAfter [ "writeBoundary" ] copilotCachePopulationScript;
+
+        copilotCliSkillsPrune = lib.mkIf (cfg.copilotCli.excludeSkills != [ ]) (
+          lib.hm.dag.entryAfter [ "copilotCliPluginsCache" ] (
+            lib.concatMapStringsSep "\n" (skill: ''
+              rm -rf "${copilotBaseDir}/skills/${skill}"
+            '') cfg.copilotCli.excludeSkills
+          )
+        );
 
         copilotCliPluginsPrune = lib.mkIf cfg.copilotCli.declarative (
           lib.hm.dag.entryAfter [ "copilotCliPluginsCache" ] ''
