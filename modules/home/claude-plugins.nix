@@ -54,6 +54,11 @@ let
         default = null;
         description = "Override plugin source path. Use when the entire repo is the plugin.";
       };
+      excludeAgents = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = "Agent names to exclude (without .md extension).";
+      };
     };
   };
 
@@ -131,12 +136,19 @@ let
         src = getPluginSrc name pluginCfg;
         target = getPluginCachePath name pluginCfg;
       in
-      ''
-        mkdir -p "$(dirname "${target}")"
-        rm -rf "${target}"
-        cp -rL "${src}" "${target}"
-        chmod -R u+w "${target}"
-      ''
+      (
+        ''
+          mkdir -p "$(dirname "${target}")"
+          rm -rf "${target}"
+          cp -rL "${src}" "${target}"
+          chmod -R u+w "${target}"
+        ''
+        + lib.optionalString (pluginCfg.excludeAgents != [ ]) (
+          lib.concatMapStringsSep "\n" (agent: ''
+            rm -f "${target}/agents/${agent}.md"
+          '') pluginCfg.excludeAgents
+        )
+      )
     ) enabledPlugins
   );
 

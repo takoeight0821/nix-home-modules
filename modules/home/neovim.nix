@@ -6,6 +6,25 @@
 }:
 let
   cfg = config.takoeight0821.programs.neovim;
+  treeSitterGrammars = pkgs.tree-sitter.allGrammars;
+  treeSitterParsers = pkgs.tree-sitter.withPlugins (_: treeSitterGrammars);
+  treeSitterRuntime = pkgs.runCommand "neovim-tree-sitter-runtime" { } ''
+    mkdir -p "$out/parser" "$out/queries"
+    ln -s ${treeSitterParsers}/*.so "$out/parser/"
+
+    ${lib.concatMapStringsSep "\n" (
+      grammar:
+      let
+        language = lib.replaceStrings [ "-" ] [ "_" ] grammar.language;
+      in
+      ''
+        if [ -d ${grammar}/queries ]; then
+          mkdir -p "$out/queries/${language}"
+          ln -s ${grammar}/queries/* "$out/queries/${language}/"
+        fi
+      ''
+    ) treeSitterGrammars}
+  '';
 in
 {
   options.takoeight0821.programs.neovim = {
@@ -43,9 +62,9 @@ in
           config = "vim.cmd([[colorscheme vscode]])";
         }
 
-        # Treesitter parsers + queries are built by Nix; native vim.treesitter.start()
+        # Tree-sitter parsers + queries are built by Nix; native vim.treesitter.start()
         # (registered in autocmds.lua) enables highlighting. No :TSUpdate at runtime.
-        nvim-treesitter.withAllGrammars
+        treeSitterRuntime
 
         plenary-nvim # telescope dependency
         telescope-nvim # keymaps defined in keymaps.lua (command-style)
@@ -273,7 +292,7 @@ in
           end,
         })
 
-        -- Enable treesitter highlighting (parsers provided by Nix via withAllGrammars)
+        -- Enable Tree-sitter highlighting (parsers provided by Nix)
         autocmd("FileType", {
           group = augroup("treesitter_start", { clear = true }),
           callback = function()

@@ -204,7 +204,6 @@ let
         CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR = "1";
       };
       teammateMode = "auto";
-      language = "Japanese";
       voiceEnabled = true;
       autoUpdatesChannel = "latest";
       hooks = {
@@ -215,15 +214,6 @@ let
               {
                 type = "command";
                 command = "bash ~/.claude/hooks/log-wrapper.sh prefer-jq ~/.claude/hooks/prefer-jq.sh";
-              }
-            ];
-          }
-          {
-            matcher = "Bash";
-            hooks = [
-              {
-                type = "command";
-                command = "bash ~/.claude/hooks/log-wrapper.sh prefer-rg ~/.claude/hooks/prefer-rg.sh";
               }
             ];
           }
@@ -314,6 +304,7 @@ let
       }
       // lib.mapAttrs (_event: entries: map mkHookEntry entries) validatedExtraHookEntries;
     }
+    // lib.optionalAttrs (cfg.language != null) { language = cfg.language; }
     // cfg.extraSettings
   );
 
@@ -321,6 +312,11 @@ in
 {
   options.takoeight0821.programs.claude-hooks = {
     enable = lib.mkEnableOption "Claude Code safety hooks and settings";
+    language = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Force Claude Code response language. null = let Claude match the conversation.";
+    };
     extraAllowPermissions = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
@@ -402,11 +398,6 @@ in
     home.file.".claude/hooks/prefer-jq.sh" = {
       executable = true;
       text = builtins.readFile ./hooks/prefer-jq.sh;
-    };
-
-    home.file.".claude/hooks/prefer-rg.sh" = {
-      executable = true;
-      text = builtins.readFile ./hooks/prefer-rg.sh;
     };
 
     home.file.".claude/hooks/block-dangerous-flags.sh" = {

@@ -11,7 +11,7 @@ takoeight0821.programs.<name>.enable = true;
 | Module | Option | Description |
 |---|---|---|
 | `shell.nix` | `shell` | Zsh with starship, direnv, fzf, vi-mode, aliases |
-| `neovim.nix` | `neovim` | Neovim IDE with treesitter, telescope, LSP, completion |
+| `neovim.nix` | `neovim` | Neovim IDE with Tree-sitter, telescope, LSP, completion |
 | `ghostty.nix` | `ghostty` | Ghostty terminal (configurable font and size) |
 | `iterm2/` | `iterm2` | iTerm2 with Nord color scheme |
 | `tmux.nix` | `tmux` | tmux with resurrect/continuum plugins |
