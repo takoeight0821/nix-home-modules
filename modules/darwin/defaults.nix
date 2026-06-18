@@ -68,6 +68,7 @@ in
         "claude"
         "codex"
         "copilot-cli"
+        "github-copilot-app"
         "antigravity"
 
         "iterm2"
