@@ -5,6 +5,7 @@
 #   - Current directory (with ~ expansion)
 #   - Git branch name (in magenta)
 #   - Model name (in green)
+#   - Reasoning effort level (in blue, when available)
 #   - Context window usage percentage (in yellow)
 #   - Rate limit usage: 5-hour and 7-day (in red, when available)
 #
@@ -31,6 +32,12 @@ if git -C "$cwd" rev-parse --git-dir &>/dev/null; then
 fi
 
 model_info=" $(printf '\033[32m')${model}$(printf '\033[0m')"
+
+effort_info=""
+effort=$(echo "$input" | jq -r '.effort.level // empty')
+if [ -n "$effort" ]; then
+    effort_info=" $(printf '\033[34m')[effort:${effort}]$(printf '\033[0m')"
+fi
 
 context_info=""
 used_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
@@ -61,4 +68,4 @@ if [ -n "$rate_parts" ]; then
     rate_info=" $(printf '\033[31m')[${rate_parts}]$(printf '\033[0m')"
 fi
 
-printf "$(printf '\033[36m')%s$(printf '\033[0m')%s%s%s%s" "$dir_display" "$git_info" "$model_info" "$context_info""$rate_info"
+printf "$(printf '\033[36m')%s$(printf '\033[0m')%s%s%s%s%s" "$dir_display" "$git_info" "$model_info" "$effort_info" "$context_info""$rate_info"
