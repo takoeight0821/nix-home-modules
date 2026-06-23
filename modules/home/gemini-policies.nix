@@ -14,6 +14,7 @@ let
     "git tag"
 
     "gh-pr-reply"
+    "gh-pr-resolve"
     "gh pr view"
     "gh pr list"
     "gh pr diff"

@@ -84,6 +84,7 @@ let
           "Bash(* --help)"
 
           "Bash(gh-pr-reply:*)"
+          "Bash(gh-pr-resolve:*)"
           "Bash(gh pr view:*)"
           "Bash(gh pr list:*)"
           "Bash(gh pr diff:*)"
@@ -414,11 +415,6 @@ in
     home.file.".claude/hooks/gh-api-readonly.sh" = {
       executable = true;
       text = builtins.readFile ./hooks/gh-api-readonly.sh;
-    };
-
-    home.file.".local/bin/gh-pr-reply" = {
-      executable = true;
-      text = builtins.readFile ./hooks/gh-pr-reply.sh;
     };
 
     home.file.".claude/hooks/git-readonly-approve.sh" = {
