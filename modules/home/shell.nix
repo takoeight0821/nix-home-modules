@@ -21,6 +21,17 @@ in
     programs.zsh = {
       enable = true;
 
+      # Run the (slow) compinit security audit at most once a day; use the
+      # cached dump on every other startup. Halves completion init time.
+      completionInit = ''
+        autoload -Uz compinit
+        if [[ -n "$HOME/.zcompdump"(#qNmh+24) ]]; then
+          compinit
+        else
+          compinit -C
+        fi
+      '';
+
       history = {
         size = 50000;
         save = 50000;
@@ -101,9 +112,6 @@ in
         if [ -z "''${COPILOT_GITHUB_TOKEN-}" ] && [ -r "$HOME/.cache/gh-copilot/token" ]; then
           export COPILOT_GITHUB_TOKEN="$(cat "$HOME/.cache/gh-copilot/token")"
         fi
-
-        # Initialize completions
-        autoload -Uz compinit && compinit
 
         # mise (runtime version manager)
         eval "$(mise activate zsh)"
