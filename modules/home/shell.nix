@@ -54,8 +54,6 @@ in
         npx = "echo 'Use pnpm dlx instead of npx'; false";
 
         grep = "grep --color=auto";
-
-        hooklog = "less +F ~/.claude/hooks.log";
       }
       // lib.optionalAttrs (cfg.darwinRebuildFlakeRef != "") {
         nrs = "darwin-rebuild switch --flake ${cfg.darwinRebuildFlakeRef}";

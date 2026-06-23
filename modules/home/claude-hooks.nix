@@ -215,7 +215,7 @@ let
             hooks = [
               {
                 type = "command";
-                command = "bash ~/.claude/hooks/log-wrapper.sh prefer-jq ~/.claude/hooks/prefer-jq.sh";
+                command = "bash ~/.claude/hooks/prefer-jq.sh";
               }
             ];
           }
@@ -224,7 +224,7 @@ let
             hooks = [
               {
                 type = "command";
-                command = "bash ~/.claude/hooks/log-wrapper.sh block-dangerous-flags ~/.claude/hooks/block-dangerous-flags.sh";
+                command = "bash ~/.claude/hooks/block-dangerous-flags.sh";
               }
             ];
           }
@@ -233,7 +233,16 @@ let
             hooks = [
               {
                 type = "command";
-                command = "bash ~/.claude/hooks/log-wrapper.sh block-package-install ~/.claude/hooks/block-package-install.sh";
+                command = "bash ~/.claude/hooks/block-force-push.sh";
+              }
+            ];
+          }
+          {
+            matcher = "Bash";
+            hooks = [
+              {
+                type = "command";
+                command = "bash ~/.claude/hooks/block-package-install.sh";
               }
             ];
           }
@@ -243,7 +252,7 @@ let
             hooks = [
               {
                 type = "command";
-                command = "bash ~/.claude/hooks/log-wrapper.sh git-readonly-approve ~/.claude/hooks/git-readonly-approve.sh";
+                command = "bash ~/.claude/hooks/git-readonly-approve.sh";
               }
             ];
           }
@@ -252,7 +261,7 @@ let
             hooks = [
               {
                 type = "command";
-                command = "bash ~/.claude/hooks/log-wrapper.sh gh-api-readonly ~/.claude/hooks/gh-api-readonly.sh";
+                command = "bash ~/.claude/hooks/gh-api-readonly.sh";
               }
             ];
           }
@@ -264,7 +273,7 @@ let
             hooks = [
               {
                 type = "command";
-                command = "bash ~/.claude/hooks/log-wrapper.sh post-git-push-watch ~/.claude/hooks/post-git-push-watch.sh";
+                command = "bash ~/.claude/hooks/post-git-push-watch.sh";
                 timeout = 120;
               }
             ];
@@ -392,11 +401,6 @@ in
                 fi
       '';
 
-    home.file.".claude/hooks/log-wrapper.sh" = {
-      executable = true;
-      text = builtins.readFile ./hooks/log-wrapper.sh;
-    };
-
     home.file.".claude/hooks/prefer-jq.sh" = {
       executable = true;
       text = builtins.readFile ./hooks/prefer-jq.sh;
@@ -405,6 +409,11 @@ in
     home.file.".claude/hooks/block-dangerous-flags.sh" = {
       executable = true;
       text = builtins.readFile ./hooks/block-dangerous-flags.sh;
+    };
+
+    home.file.".claude/hooks/block-force-push.sh" = {
+      executable = true;
+      text = builtins.readFile ./hooks/block-force-push.sh;
     };
 
     home.file.".claude/hooks/block-package-install.sh" = {
